@@ -1,12 +1,6 @@
 #include "../libs/headers/blockchain.h"
 #include <stdio.h>
 
-struct Block {
-  unsigned long previous_hash;
-  unsigned long hash;
-  char *transactions;
-};
-
 int main() {
 
   struct Block *blockChain[3];

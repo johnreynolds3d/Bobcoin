@@ -1,13 +1,8 @@
+#include "headers/blockchain.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct Block {
-  unsigned long previous_hash;
-  unsigned long hash;
-  char *transactions;
-};
 
 // djb2 hashing algorithm by Dan Bernstein
 unsigned long Hash(unsigned char *str) {
