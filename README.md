@@ -1,1 +1,1 @@
-## A Modular Implementation of a Blockchain in C
+## An Implementation of a Blockchain in C
