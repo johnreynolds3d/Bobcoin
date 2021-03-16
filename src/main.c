@@ -1,4 +1,4 @@
-#include "blockchain.h"
+#include "../libs/headers/blockchain.h"
 #include <stdio.h>
 
 struct Block {
