@@ -6,7 +6,9 @@
 
 // djb2 hashing algorithm by Dan Bernstein
 unsigned long Hash(unsigned char *str) {
+
   unsigned long hash = 5381;
+
   int c;
 
   while ((c = *str++)) {
@@ -17,11 +19,13 @@ unsigned long Hash(unsigned char *str) {
 }
 
 struct Block *Block_create(unsigned long previous_hash, char *transactions) {
+
   struct Block *block = malloc(sizeof(struct Block));
   assert(block != NULL);
 
   block->transactions = malloc(strlen(transactions) + 1);
   assert(block->transactions != NULL);
+
   strcpy(block->transactions, transactions);
 
   size_t st = sizeof(block->transactions) / sizeof(unsigned char);
@@ -38,6 +42,7 @@ struct Block *Block_create(unsigned long previous_hash, char *transactions) {
 }
 
 void Block_destroy(struct Block *block) {
+
   assert(block != NULL);
 
   free(block->transactions);
@@ -45,6 +50,7 @@ void Block_destroy(struct Block *block) {
 }
 
 void Block_print(struct Block *block) {
+
   assert(block != NULL);
 
   printf("\tPrevious hash:\t%lu\n\tTransactions:\t%s\n\tHash:\t\t%lu",
