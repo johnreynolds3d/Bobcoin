@@ -1,1 +1,1 @@
-valgrind --leak-check=yes -s ./bin/blockchain
+valgrind --leak-check=yes -s ./bin/linux/blockchain
