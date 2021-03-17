@@ -1,1 +1,3 @@
 ## An Implementation of a Blockchain in C
+
+There's something *decentralized* happening in the sleepy town of Twin Peaks...
