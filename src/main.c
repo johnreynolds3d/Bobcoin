@@ -1,4 +1,4 @@
-#include "../libs/headers/blockchain.h"
+#include "../lib/headers/blockchain.h"
 #include <stdio.h>
 
 int main() {
