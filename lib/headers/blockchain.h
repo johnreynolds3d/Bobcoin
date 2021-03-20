@@ -2,14 +2,12 @@
 #define blockchain_h
 
 struct Block {
-  unsigned long previous_hash;
-  unsigned long hash;
+  unsigned char *previous_hash;
+  unsigned char *hash;
   char *transactions;
 };
 
-extern unsigned long Hash(unsigned char *str);
-
-extern struct Block *Block_create(unsigned long previous_hash,
+extern struct Block *Block_create(unsigned char *previous_hash,
                                   char *transactions);
 
 extern void Block_destroy(struct Block *block);
