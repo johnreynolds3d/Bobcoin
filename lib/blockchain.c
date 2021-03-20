@@ -21,13 +21,12 @@ struct Block *Block_create(unsigned char *previous_hash, char *transactions) {
   block->timestamp = malloc(32 * sizeof(char));
   assert(block->timestamp != NULL);
   strcpy(block->timestamp, asctime(time_info));
-  // printf("\tTimestamp:\t%s", block->timestamp);
 
   block->transactions = malloc(strlen(transactions) + 1);
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
 
-  BYTE text[strlen(transactions)];
+  BYTE text[strlen(transactions) + 1];
   strcpy(text, transactions);
 
   BYTE hash[SHA256_BLOCK_SIZE] = {
@@ -63,10 +62,18 @@ struct Block *Block_create(unsigned char *previous_hash, char *transactions) {
 
 void Block_print(struct Block *block) {
   assert(block != NULL);
-  printf("\tTimestamp:\t%s\tPrevious hash:\t%s\n\tTransactions:\t%s\n\tTX "
-         "hash:\t%s\n",
+  printf("\tTimestamp:\t%s\tPrevious "
+         "hash:\t%s\n\tTransactions:\t%s\n\tTX_hash:\t%s\n",
          block->timestamp, block->previous_hash, block->transactions,
          block->hash);
+
+  printf("\tTX_H binary:\t");
+  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    for (int j = 0; j < 8; j++) {
+      printf("%d", !!((block->hash[0] << j) & 0x80));
+    }
+  }
+  printf("\n");
 }
 
 void Block_destroy(struct Block *block) {
