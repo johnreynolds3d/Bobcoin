@@ -2,4 +2,4 @@
 
 There's something *decentralized* happening in the sleepy town of Twin Peaks...
 
-TODO: Implement Bitcoin's block structure (previous_hash, timestamp, tx_root, and nonce); using a Merkle Tree for tx_root, and something like SHA-256 instead of djb2 for hashing.
+This is a work in progress. I'm currently working on modifying it to use the Bitcoin model. I'm using Brad Conte's implementation of SHA-256, which can be found at https://github.com/B-Con/crypto-algorithms
