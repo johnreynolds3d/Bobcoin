@@ -5,11 +5,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 struct Block *Block_create(unsigned char *previous_hash, char *transactions) {
 
+  time_t rawtime;
+  struct tm *time_info;
+
+  time(&rawtime);
+  time_info = localtime(&rawtime);
+
   struct Block *block = malloc(sizeof(struct Block));
   assert(block != NULL);
+
+  block->timestamp = malloc(32 * sizeof(char));
+  assert(block->timestamp != NULL);
+  strcpy(block->timestamp, asctime(time_info));
+  // printf("\tTimestamp:\t%s", block->timestamp);
 
   block->transactions = malloc(strlen(transactions) + 1);
   assert(block->transactions != NULL);
@@ -51,12 +63,15 @@ struct Block *Block_create(unsigned char *previous_hash, char *transactions) {
 
 void Block_print(struct Block *block) {
   assert(block != NULL);
-  printf("\tPrevious hash:\t%s\n\tTransactions:\t%s\n\tTX hash:\t%s\n",
-         block->previous_hash, block->transactions, block->hash);
+  printf("\tTimestamp:\t%s\tPrevious hash:\t%s\n\tTransactions:\t%s\n\tTX "
+         "hash:\t%s\n",
+         block->timestamp, block->previous_hash, block->transactions,
+         block->hash);
 }
 
 void Block_destroy(struct Block *block) {
   assert(block != NULL);
+  free(block->timestamp);
   free(block->transactions);
   free(block->previous_hash);
   free(block->hash);

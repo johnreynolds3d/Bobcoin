@@ -5,13 +5,14 @@ struct Block {
   unsigned char *previous_hash;
   unsigned char *hash;
   char *transactions;
+  unsigned long nonce;
+  char *timestamp;
 };
 
-extern struct Block *Block_create(unsigned char *previous_hash,
-                                  char *transactions);
+struct Block *Block_create(unsigned char *previous_hash, char *transactions);
 
-extern void Block_destroy(struct Block *block);
+void Block_print(struct Block *block);
 
-extern void Block_print(struct Block *block);
+void Block_destroy(struct Block *block);
 
 #endif

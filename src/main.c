@@ -25,9 +25,7 @@ int main() {
   for (i = 0; i < num_blocks; i++) {
     printf("\nBlock %d:\n", i);
     Block_print(blockchain[i]);
-    printf("\n");
   }
-
   printf("\n");
 
   for (i = 0; i < num_blocks; i++) {
