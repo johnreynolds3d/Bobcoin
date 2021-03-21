@@ -9,7 +9,10 @@ struct Block {
   char *timestamp;
 };
 
-struct Block *Block_create(unsigned char *previous_hash, char *transactions);
+unsigned char *Hash(unsigned char *buf, char *transactions);
+
+struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
+                           char *transactions);
 
 void Block_print(struct Block *block);
 
