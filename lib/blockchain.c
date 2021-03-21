@@ -7,6 +7,51 @@
 #include <string.h>
 #include <time.h>
 
+struct User *User_create(unsigned char *public_key, unsigned char *private_key,
+                         char *name) {
+
+  assert(public_key != NULL && private_key != NULL && name != NULL);
+
+  struct User *user = calloc((size_t)1, sizeof(struct User));
+  assert(user != NULL);
+
+  user->public_key =
+      calloc((size_t)(strlen(public_key) + 1), sizeof(unsigned char));
+  assert(user->public_key != NULL);
+  strcpy(user->public_key, public_key);
+
+  user->private_key =
+      calloc((size_t)(strlen(private_key) + 1), sizeof(unsigned char));
+  assert(user->private_key != NULL);
+  strcpy(user->private_key, private_key);
+
+  user->public_key = calloc((size_t)(strlen(name) + 1), sizeof(char));
+  assert(user->name != NULL);
+  strcpy(user->name, name);
+
+  return user;
+}
+
+void User_print(struct User *user) {
+
+  assert(user != NULL);
+
+  printf("\tname:\t%s\n", user->name);
+  printf("\tpublic_key:\t%s\n", user->public_key);
+  printf("\tprivate_key:\t%s\n", user->private_key);
+}
+
+void User_destroy(struct User *user) {
+
+  assert(user != NULL);
+
+  free(user->public_key);
+  free(user->private_key);
+  free(user->name);
+
+  free(user);
+}
+
 unsigned char *Hash(unsigned char *buf, char *transactions) {
 
   assert(buf != NULL && transactions != NULL);

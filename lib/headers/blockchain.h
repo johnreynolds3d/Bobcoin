@@ -9,6 +9,12 @@ struct Block {
   char *timestamp;
 };
 
+struct User {
+  unsigned char *public_key;
+  unsigned char *private_key;
+  char *name;
+};
+
 unsigned char *Hash(unsigned char *buf, char *transactions);
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
@@ -17,5 +23,12 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 void Block_print(struct Block *block);
 
 void Block_destroy(struct Block *block);
+
+struct User *User_create(unsigned char *public_key, unsigned char *private_key,
+                         char *name);
+
+void User_print(struct User *user);
+
+void User_destroy(struct User *user);
 
 #endif
