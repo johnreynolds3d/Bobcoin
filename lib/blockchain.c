@@ -33,7 +33,7 @@ unsigned char *Hash(unsigned char *buf, char *transactions) {
 }
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           int size_transactions, char *transactions) {
+                           char *transactions) {
 
   assert(previous_hash != NULL && transactions != NULL);
 
@@ -50,7 +50,8 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   assert(block->timestamp != NULL);
   strcpy(block->timestamp, gmt);
 
-  block->transactions = calloc((size_t)(size_transactions + 1), sizeof(char));
+  block->transactions =
+      calloc((size_t)(strlen(transactions) + 1), sizeof(char));
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
 

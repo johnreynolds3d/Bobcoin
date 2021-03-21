@@ -12,7 +12,7 @@ struct Block {
 unsigned char *Hash(unsigned char *buf, char *transactions);
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           int size_transactions, char *transactions);
+                           char *transactions);
 
 void Block_print(struct Block *block);
 
