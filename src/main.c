@@ -9,13 +9,15 @@ int main() {
 
   srand(time(NULL));
 
-  int num_blocks = 3;
+  int num_blocks = 4;
 
   struct Block *blockchain[num_blocks];
 
-  char *transactions = "Bob sent Laura 10 bitcoin, Dale sent Harry 7 bitcoin";
+  char *transactions = "";
 
-  int num_leading_zeros = rand() % (31 + 1 - 0) + 0;
+  int num_leading_zeros = rand() % (7 + 1 - 0) + 0;
+
+  printf("\thash 0:\t\t");
 
   blockchain[0] =
       Block_create(num_leading_zeros, (unsigned char *)"", transactions);
@@ -25,6 +27,8 @@ int main() {
 
   num_leading_zeros = rand() % (31 + 1 - 0) + 0;
 
+  printf("\thash 1:\t\t");
+
   blockchain[1] =
       Block_create(num_leading_zeros, blockchain[0]->hash, transactions);
 
@@ -32,8 +36,19 @@ int main() {
 
   num_leading_zeros = rand() % (31 + 1 - 0) + 0;
 
+  printf("\thash 2:\t\t");
+
   blockchain[2] =
       Block_create(num_leading_zeros, blockchain[1]->hash, transactions);
+
+  transactions = "Bob sent Laura 10 bitcoin, Dale sent Harry 7 bitcoin";
+
+  num_leading_zeros = rand() % (31 + 1 - 0) + 0;
+
+  printf("\thash 3:\t\t");
+
+  blockchain[3] =
+      Block_create(num_leading_zeros, blockchain[2]->hash, transactions);
 
   int i = 0;
 

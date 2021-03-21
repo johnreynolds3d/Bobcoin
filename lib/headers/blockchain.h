@@ -5,7 +5,7 @@ struct Block {
   unsigned char *previous_hash;
   unsigned char *hash;
   char *transactions;
-  int nonce;
+  unsigned int nonce;
   char *timestamp;
 };
 

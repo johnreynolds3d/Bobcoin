@@ -24,7 +24,7 @@ unsigned char *Hash(unsigned char *buf, char *transactions) {
   sha256_update(&ctx, text, strlen(text));
   sha256_final(&ctx, buf);
 
-  if (!memcmp(hash, buf, SHA256_BLOCK_SIZE)) {
+  if (!memcmp(hash, buf, SHA256_BLOCK_SIZE + 1)) {
     printf("Hashing of '%s' failed\n", transactions);
     exit(1);
   }
@@ -64,7 +64,20 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   assert(block->hash != NULL);
 
   BYTE buf[SHA256_BLOCK_SIZE + 1] = {'a'};
-  strcpy(block->hash, Hash(buf, transactions));
+
+  Hash(buf, transactions);
+
+  int i = 0;
+  int j = 0;
+
+  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    for (j = 7; j >= 0; --j) {
+      putchar((buf[i] & (1 << j)) ? '1' : '0');
+    }
+  }
+  printf("\n\n");
+
+  strcpy(block->hash, buf);
 
   return block;
 }
@@ -78,16 +91,6 @@ void Block_print(struct Block *block) {
   int i = 0;
   int j = 0;
 
-  /*
-    printf("\tprev_hash bin:\t");
-    for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-      for (j = 0; j < 8; j++) {
-        printf("%d", !!((block->previous_hash[i] << j) & 0x80));
-      }
-    }
-    printf("\n");
-  */
-
   printf("\tprev_hash:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", block->previous_hash[i]);
@@ -96,19 +99,17 @@ void Block_print(struct Block *block) {
 
   printf("\ttransactions:\t%s\n", block->transactions);
 
-  /*
-    printf("\ttx_hash bin:\t");
-    for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-      for (j = 0; j < 8; j++) {
-        printf("%d", !!((block->hash[i] << j) & 0x80));
-      }
-    }
-    printf("\n");
-  */
-
   printf("\ttx_hash:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", block->hash[i]);
+  }
+  printf("\n");
+
+  printf("\ttx_hash binary:\t");
+  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    for (j = 7; j >= 0; --j) {
+      putchar((block->hash[i] & (1 << j)) ? '1' : '0');
+    }
   }
   printf("\n");
 }
