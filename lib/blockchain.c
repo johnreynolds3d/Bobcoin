@@ -33,35 +33,36 @@ unsigned char *Hash(unsigned char *buf, char *transactions) {
 }
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           char *transactions) {
+                           int size_transactions, char *transactions) {
 
   assert(previous_hash != NULL && transactions != NULL);
 
-  struct Block *block = malloc(sizeof(struct Block));
+  struct Block *block = calloc((size_t)1, sizeof(struct Block));
   assert(block != NULL);
 
-  block->timestamp = malloc(32 * sizeof(char));
+  time_t current_time = time(NULL);
+
+  struct tm *time_info = gmtime(&current_time);
+
+  char *gmt = asctime(time_info);
+
+  block->timestamp = calloc((size_t)(strlen(gmt) + 1), sizeof(char));
   assert(block->timestamp != NULL);
+  strcpy(block->timestamp, gmt);
 
-  time_t rawtime;
-  struct tm *time_info;
-
-  time(&rawtime);
-  time_info = gmtime(&rawtime);
-  strcpy(block->timestamp, asctime(time_info));
-
-  block->transactions = malloc(strlen(transactions) + 1);
+  block->transactions = calloc((size_t)(size_transactions + 1), sizeof(char));
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
 
-  block->previous_hash = malloc(SHA256_BLOCK_SIZE);
+  block->previous_hash =
+      calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(unsigned char));
   assert(block->previous_hash != NULL);
   strcpy(block->previous_hash, previous_hash);
 
-  block->hash = malloc(SHA256_BLOCK_SIZE);
+  block->hash = calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(unsigned char));
   assert(block->hash != NULL);
 
-  BYTE buf[SHA256_BLOCK_SIZE];
+  BYTE buf[SHA256_BLOCK_SIZE + 1] = {'a'};
   strcpy(block->hash, Hash(buf, transactions));
 
   return block;
@@ -73,7 +74,9 @@ void Block_print(struct Block *block) {
 
   printf("\ttimestamp:\t%s", block->timestamp);
 
-  int i, j;
+  int i = 0;
+  int j = 0;
+
   /*
     printf("\tprev_hash bin:\t");
     for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
@@ -83,6 +86,7 @@ void Block_print(struct Block *block) {
     }
     printf("\n");
   */
+
   printf("\tprev_hash:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", block->previous_hash[i]);
@@ -90,6 +94,7 @@ void Block_print(struct Block *block) {
   printf("\n");
 
   printf("\ttransactions:\t%s\n", block->transactions);
+
   /*
     printf("\ttx_hash bin:\t");
     for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
@@ -99,6 +104,7 @@ void Block_print(struct Block *block) {
     }
     printf("\n");
   */
+
   printf("\ttx_hash:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", block->hash[i]);
@@ -114,5 +120,6 @@ void Block_destroy(struct Block *block) {
   free(block->transactions);
   free(block->previous_hash);
   free(block->hash);
+
   free(block);
 }

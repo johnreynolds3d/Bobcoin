@@ -5,14 +5,14 @@ struct Block {
   unsigned char *previous_hash;
   unsigned char *hash;
   char *transactions;
-  unsigned long nonce;
+  int nonce;
   char *timestamp;
 };
 
 unsigned char *Hash(unsigned char *buf, char *transactions);
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           char *transactions);
+                           int size_transactions, char *transactions);
 
 void Block_print(struct Block *block);
 
