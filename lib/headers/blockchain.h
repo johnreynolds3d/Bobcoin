@@ -4,28 +4,28 @@
 struct Block {
   unsigned char *previous_hash;
   unsigned char *hash;
-  char *transactions;
+  unsigned char *transactions;
   unsigned int nonce;
-  char *timestamp;
+  unsigned char *timestamp;
 };
 
 struct User {
   unsigned char *public_key;
   unsigned char *private_key;
-  char *name;
+  unsigned char *name;
 };
 
-unsigned char *Hash(unsigned char *buf, char *transactions);
+unsigned char *Hash(unsigned char *buf, unsigned char *transactions);
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           char *transactions);
+                           unsigned char *transactions);
 
 void Block_print(struct Block *block);
 
 void Block_destroy(struct Block *block);
 
 struct User *User_create(unsigned char *public_key, unsigned char *private_key,
-                         char *name);
+                         unsigned char *name);
 
 void User_print(struct User *user);
 

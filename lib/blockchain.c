@@ -8,20 +8,18 @@
 #include <time.h>
 
 struct User *User_create(unsigned char *public_key, unsigned char *private_key,
-                         char *name) {
+                         unsigned char *name) {
 
   assert(public_key != NULL && private_key != NULL && name != NULL);
 
   struct User *user = calloc((size_t)1, sizeof(struct User));
   assert(user != NULL);
 
-  user->public_key =
-      calloc((size_t)(strlen(public_key) + 1), sizeof(unsigned char));
+  user->public_key = calloc((size_t)(strlen(public_key) + 1), sizeof(char));
   assert(user->public_key != NULL);
   strcpy(user->public_key, public_key);
 
-  user->private_key =
-      calloc((size_t)(strlen(private_key) + 1), sizeof(unsigned char));
+  user->private_key = calloc((size_t)(strlen(private_key) + 1), sizeof(char));
   assert(user->private_key != NULL);
   strcpy(user->private_key, private_key);
 
@@ -52,7 +50,7 @@ void User_destroy(struct User *user) {
   free(user);
 }
 
-unsigned char *Hash(unsigned char *buf, char *transactions) {
+unsigned char *Hash(unsigned char *buf, unsigned char *transactions) {
 
   assert(buf != NULL && transactions != NULL);
 
@@ -78,7 +76,7 @@ unsigned char *Hash(unsigned char *buf, char *transactions) {
 }
 
 struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
-                           char *transactions) {
+                           unsigned char *transactions) {
 
   assert(previous_hash != NULL && transactions != NULL);
 
@@ -89,7 +87,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 
   struct tm *time_info = gmtime(&current_time);
 
-  char *gmt = asctime(time_info);
+  unsigned char *gmt = asctime(time_info);
 
   block->timestamp = calloc((size_t)(strlen(gmt) + 1), sizeof(char));
   assert(block->timestamp != NULL);
@@ -100,12 +98,11 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
 
-  block->previous_hash =
-      calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(unsigned char));
+  block->previous_hash = calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(char));
   assert(block->previous_hash != NULL);
   strcpy(block->previous_hash, previous_hash);
 
-  block->hash = calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(unsigned char));
+  block->hash = calloc((size_t)(SHA256_BLOCK_SIZE + 1), sizeof(char));
   assert(block->hash != NULL);
 
   BYTE buf[SHA256_BLOCK_SIZE + 1] = {'a'};

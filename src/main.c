@@ -13,7 +13,7 @@ int main() {
 
   struct Block *blockchain[num_blocks];
 
-  char *transactions = "";
+  unsigned char *transactions = "";
 
   int num_leading_zeros = rand() % (7 + 1 - 0) + 0;
 
