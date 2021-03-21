@@ -17,7 +17,7 @@ int main() {
 
   int num_leading_zeros = rand() % (7 + 1 - 0) + 0;
 
-  printf("\thash 0:\t\t");
+  // printf("\thash 0:\t\t");
 
   blockchain[0] =
       Block_create(num_leading_zeros, (unsigned char *)"", transactions);
@@ -27,7 +27,7 @@ int main() {
 
   num_leading_zeros = rand() % (31 + 1 - 0) + 0;
 
-  printf("\thash 1:\t\t");
+  // printf("\thash 1:\t\t");
 
   blockchain[1] =
       Block_create(num_leading_zeros, blockchain[0]->hash, transactions);
@@ -36,7 +36,7 @@ int main() {
 
   num_leading_zeros = rand() % (31 + 1 - 0) + 0;
 
-  printf("\thash 2:\t\t");
+  // printf("\thash 2:\t\t");
 
   blockchain[2] =
       Block_create(num_leading_zeros, blockchain[1]->hash, transactions);
@@ -45,7 +45,7 @@ int main() {
 
   num_leading_zeros = rand() % (31 + 1 - 0) + 0;
 
-  printf("\thash 3:\t\t");
+  // printf("\thash 3:\t\t");
 
   blockchain[3] =
       Block_create(num_leading_zeros, blockchain[2]->hash, transactions);

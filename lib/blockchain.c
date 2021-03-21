@@ -112,6 +112,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 
   Hash(buf, transactions);
 
+  /*
   int i = 0;
   int j = 0;
 
@@ -121,6 +122,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
     }
   }
   printf("\n\n");
+  */
 
   strcpy(block->hash, buf);
 
@@ -150,6 +152,7 @@ void Block_print(struct Block *block) {
   }
   printf("\n");
 
+  /*
   printf("\ttx_hash binary:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     for (j = 7; j >= 0; --j) {
@@ -157,6 +160,7 @@ void Block_print(struct Block *block) {
     }
   }
   printf("\n");
+  */
 }
 
 void Block_destroy(struct Block *block) {
