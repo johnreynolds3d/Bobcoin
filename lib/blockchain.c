@@ -1,6 +1,7 @@
 #include "headers/blockchain.h"
 #include "headers/sha256.h"
 #include <assert.h>
+#include <math.h>
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,7 +12,7 @@ struct User *User_create(char *public_key, char *private_key, char *name) {
 
   assert(public_key != NULL && private_key != NULL && name != NULL);
 
-  struct User *user = calloc((size_t)1, sizeof(struct User));
+  struct User *user = calloc(1, sizeof(struct User));
   assert(user != NULL);
 
   user->public_key = calloc(strlen(public_key) + 1, sizeof(char));
@@ -76,7 +77,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 
   assert(previous_hash != NULL && transactions != NULL);
 
-  struct Block *block = calloc((size_t)1, sizeof(struct Block));
+  struct Block *block = calloc(1, sizeof(struct Block));
   assert(block != NULL);
 
   time_t current_time = time(NULL);
@@ -102,23 +103,91 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 
   BYTE buf[SHA256_BLOCK_SIZE] = {'a'};
 
+  printf("\nLooking for exactly %d leading zeros...\n\n", num_leading_zeros);
+
+  block->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
+
+  int num_digits = floor((int)log10(abs((double)block->nonce))) + 1;
+
+  char *nonce = calloc(num_digits + 1, sizeof(char));
+  assert(nonce != NULL);
+
+  sprintf(nonce, "%d", block->nonce);
+  printf("nonce:\t%s\n", nonce);
+
+  char *text =
+      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
+  assert(text != NULL);
+
+  printf("\nstrlen(text):\t%d\n", (int)strlen(text));
+
+  memcpy(text, transactions, strlen(transactions) + 1);
+  strcat(text, nonce);
+
+  printf("\ntext:\t%s\n", text);
+
   Hash(buf, transactions);
-
-  /*
-  int i = 0;
-  int j = 0;
-
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    for (j = 7; j >= 0; --j) {
-      putchar((buf[i] & (1 << j)) ? '1' : '0');
-    }
-  }
-  printf("\n\n");
-  */
 
   memcpy(block->hash, buf, SHA256_BLOCK_SIZE);
 
-  return block;
+  free(text);
+  free(nonce);
+
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  int zero_test[256] = {2};
+
+  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    for (j = 7; j >= 0; --j) {
+      zero_test[k] = ((block->hash[i] & (1 << j)) ? 1 : 0);
+      k++;
+    }
+  }
+  printf("\n");
+
+  if (num_leading_zeros > 0) {
+    for (i = 0; i < num_leading_zeros; i++) {
+      printf("%d", zero_test[i]);
+    }
+    printf("\n\n");
+  }
+
+  if (num_leading_zeros == 0 && zero_test[0] == 1) {
+    printf(
+        "\t\t\t************ Found exactly %d leading zeros!!! ************\n\n",
+        num_leading_zeros);
+    Block_print(block);
+    return block;
+  }
+
+  for (i = 0; i < num_leading_zeros; i++) {
+
+    if (zero_test[i] != 0) {
+      printf("Found fewer than %d leading zeros; try again!\n\n",
+             num_leading_zeros);
+      break;
+    }
+
+    if (i == num_leading_zeros - 1) {
+      if (zero_test[num_leading_zeros] != 1) {
+        printf("Found more than %d leading zeros; try again!\n\n",
+               num_leading_zeros);
+        break;
+      } else {
+        printf("\t\t\t************ Found exactly %d leading zeros!!! "
+               "************\n\n",
+               num_leading_zeros);
+        Block_print(block);
+        return block;
+      }
+    }
+  }
+
+  Block_destroy(block);
+
+  return NULL;
 }
 
 void Block_print(struct Block *block) {
