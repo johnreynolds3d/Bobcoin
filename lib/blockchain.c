@@ -60,7 +60,7 @@ unsigned char *Hash(unsigned char *buf, char *text) {
 
   SHA256_CTX ctx;
   sha256_init(&ctx);
-  sha256_update(&ctx, text, strlen(text));
+  sha256_update(&ctx, (unsigned char *)text, strlen(text));
   sha256_final(&ctx, buf);
 
   if (!memcmp(hash, buf, SHA256_BLOCK_SIZE)) {
