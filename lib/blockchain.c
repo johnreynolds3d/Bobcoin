@@ -80,6 +80,52 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   struct Block *block = calloc(1, sizeof(struct Block));
   assert(block != NULL);
 
+  printf("\nLooking for exactly %d leading zeros...\n\n", num_leading_zeros);
+
+  // --------------------------------- NONCE -----------------------------------
+  block->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
+
+  int num_digits = floor((int)log10(fabs((double)block->nonce))) + 1;
+
+  char *nonce = calloc(num_digits + 1, sizeof(char));
+  assert(nonce != NULL);
+
+  sprintf(nonce, "%d", block->nonce);
+  printf("\tnonce:\t\t%s\n", nonce);
+
+  // ------------------------------ TRANSACTIONS -------------------------------
+  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
+  assert(block->transactions != NULL);
+  strcpy(block->transactions, transactions);
+
+  // ------------------------------- PREV_HASH ---------------------------------
+  block->previous_hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  assert(block->previous_hash != NULL);
+  memcpy(block->previous_hash, previous_hash, SHA256_BLOCK_SIZE);
+
+  // -------------------------------- TX_HASH ----------------------------------
+  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  assert(block->hash != NULL);
+
+  BYTE buf[SHA256_BLOCK_SIZE] = {'a'};
+
+  char *text =
+      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
+  assert(text != NULL);
+
+  memcpy(text, transactions, strlen(transactions) + 1);
+  strcat(text, nonce);
+
+  printf("\ttext:\t\t%s", text);
+
+  Hash(buf, transactions);
+
+  memcpy(block->hash, buf, SHA256_BLOCK_SIZE);
+
+  free(text);
+  free(nonce);
+
+  // ------------------------------- TIMESTAMP ---------------------------------
   time_t current_time = time(NULL);
 
   struct tm *time_info = gmtime(&current_time);
@@ -90,49 +136,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   assert(block->timestamp != NULL);
   strcpy(block->timestamp, gmt);
 
-  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
-  assert(block->transactions != NULL);
-  strcpy(block->transactions, transactions);
-
-  block->previous_hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->previous_hash != NULL);
-  memcpy(block->previous_hash, previous_hash, SHA256_BLOCK_SIZE);
-
-  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->hash != NULL);
-
-  BYTE buf[SHA256_BLOCK_SIZE] = {'a'};
-
-  printf("\nLooking for exactly %d leading zeros...\n\n", num_leading_zeros);
-
-  block->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
-
-  int num_digits = floor((int)log10(fabs((double)block->nonce))) + 1;
-
-  char *nonce = calloc(num_digits + 1, sizeof(char));
-  assert(nonce != NULL);
-
-  sprintf(nonce, "%d", block->nonce);
-  printf("nonce:\t%s\n", nonce);
-
-  char *text =
-      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
-  assert(text != NULL);
-
-  printf("\nstrlen(text):\t%d\n", (int)strlen(text));
-
-  memcpy(text, transactions, strlen(transactions) + 1);
-  strcat(text, nonce);
-
-  printf("\ntext:\t%s\n", text);
-
-  Hash(buf, transactions);
-
-  memcpy(block->hash, buf, SHA256_BLOCK_SIZE);
-
-  free(text);
-  free(nonce);
-
+  // ------------------------------- ZERO TEST ---------------------------------
   int i = 0;
   int j = 0;
   int k = 0;
@@ -147,16 +151,19 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
   }
   printf("\n");
 
+  printf("\tzero_test:\t");
+
   if (num_leading_zeros > 0) {
     for (i = 0; i < num_leading_zeros; i++) {
       printf("%d", zero_test[i]);
     }
-    printf("\n\n");
   }
+
+  printf("\n\n");
 
   if (num_leading_zeros == 0 && zero_test[0] == 1) {
     printf(
-        "\t\t\t************ Found exactly %d leading zeros!!! ************\n\n",
+        "\t\t************ Found exactly %d leading zeros!!! ************\n\n",
         num_leading_zeros);
     Block_print(block);
     return block;
@@ -176,7 +183,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
                num_leading_zeros);
         break;
       } else {
-        printf("\t\t\t************ Found exactly %d leading zeros!!! "
+        printf("\t\t************ Found exactly %d leading zeros!!! "
                "************\n\n",
                num_leading_zeros);
         Block_print(block);
