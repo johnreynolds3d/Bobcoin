@@ -13,14 +13,18 @@ int main() {
 
   struct Block *blockchain[num_blocks];
 
-  unsigned char *transactions = "";
+  char *transactions = "";
 
   int num_leading_zeros = rand() % (7 + 1 - 0) + 0;
 
   // printf("\thash 0:\t\t");
 
-  blockchain[0] =
-      Block_create(num_leading_zeros, (unsigned char *)"", transactions);
+  unsigned char *genesis = calloc((size_t)32, sizeof(char));
+  assert(genesis != NULL);
+
+  blockchain[0] = Block_create(num_leading_zeros, genesis, transactions);
+
+  free(genesis);
 
   transactions = "David sent Bob 12 bitcoin, Windom sent Bob 5 "
                  "bitcoin, Audrey sent Donna 6 bitcoin";
