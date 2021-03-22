@@ -107,7 +107,7 @@ struct Block *Block_create(int num_leading_zeros, unsigned char *previous_hash,
 
   block->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
 
-  int num_digits = floor((int)log10(abs((double)block->nonce))) + 1;
+  int num_digits = floor((int)log10(fabs((double)block->nonce))) + 1;
 
   char *nonce = calloc(num_digits + 1, sizeof(char));
   assert(nonce != NULL);
