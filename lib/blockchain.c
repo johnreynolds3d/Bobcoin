@@ -45,10 +45,10 @@ struct User *User_create(char *name) {
 
   BYTE buf[SHA256_BLOCK_SIZE] = {'a'};
 
-  for (i = 0; i < SHA256_BLOCK_SIZE - 1; i++) {
+  for (i = 0; i < SHA256_BLOCK_SIZE - 2; i++) {
     buf[i] = (unsigned char)rand() % (255 - 0 + 1) + 0;
   }
-  buf[SHA256_BLOCK_SIZE] = '\0';
+  buf[SHA256_BLOCK_SIZE - 1] = '\0';
 
   memcpy(user->private_key, buf, SHA256_BLOCK_SIZE);
 
@@ -155,6 +155,8 @@ struct Wallet *Wallet_create(char *public_key, unsigned char *private_key) {
 
   // wallet->transactions = calloc(4, sizeof(struct Transaction));
   // assert(wallet->transactions != NULL);
+
+  return wallet;
 }
 
 void Wallet_print(struct Wallet *wallet) {
