@@ -7,10 +7,30 @@
 
 int main() {
 
+  srand(time(NULL));
+
   int num_users = 4;
 
   struct User *users[num_users];
 
+  users[0] = User_create("Laura Palmer");
+  users[1] = User_create("Bob");
+  users[2] = User_create("Dale Cooper");
+  users[3] = User_create("Windom Earle");
+
+  int i = 0;
+
+  for (i = 0; i < num_users; i++) {
+    User_print(users[i]);
+    Wallet_print(users[i]->wallet);
+  }
+  printf("\n");
+
+  for (i = 0; i < num_users; i++) {
+    User_destroy(users[i]);
+  }
+
+  /*
   int num_blocks = 4;
 
   struct Block *blockchain[num_blocks];
@@ -18,7 +38,6 @@ int main() {
   unsigned char *genesis = calloc((size_t)32, sizeof(char));
   assert(genesis != NULL);
 
-  srand(time(NULL));
 
   int num_leading_zeros = rand() % (4 + 1 - 0) + 0;
 
@@ -76,6 +95,7 @@ int main() {
   for (int i = 0; i < num_blocks; i++) {
     Block_destroy(blockchain[i]);
   }
+  */
 
   return 0;
 }
