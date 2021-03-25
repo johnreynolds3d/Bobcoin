@@ -9,6 +9,8 @@ int main() {
 
   srand(time(NULL));
 
+  // -------------------------------- USERS -----------------------------------
+
   int num_users = 4;
 
   struct User *users[num_users];
@@ -26,9 +28,7 @@ int main() {
   }
   printf("\n");
 
-  for (i = 0; i < num_users; i++) {
-    User_destroy(users[i]);
-  }
+  //--------------------------------- BLOCKS ----------------------------------
 
   /*
   int num_blocks = 4;
@@ -84,7 +84,15 @@ int main() {
 
   blockchain[3] =
       Block_create(num_leading_zeros, blockchain[2]->hash, transactions);
+  */
 
+  // --------------------------------- CLEANUP ---------------------------------
+
+  for (i = 0; i < num_users; i++) {
+    User_destroy(users[i]);
+  }
+
+  /*
   if (blockchain[3] == NULL) {
     Block_destroy(blockchain[0]);
     Block_destroy(blockchain[1]);

@@ -185,6 +185,7 @@ void User_destroy(struct User *user) {
   free(user->user_name);
   free(user->user_public_key);
   free(user->user_private_key);
+
   free(user);
 }
 
@@ -198,6 +199,7 @@ struct Header *Header_create(int target, unsigned char *prev_hash,
   assert(header != NULL);
 
   // ------------------------------- TIMESTAMP ---------------------------------
+
   time_t current_time = time(NULL);
 
   struct tm *time_info = gmtime(&current_time);
@@ -210,6 +212,7 @@ struct Header *Header_create(int target, unsigned char *prev_hash,
   strcpy(header->timestamp, gmt);
 
   // --------------------------------- NONCE -----------------------------------
+
   printf("\nLooking for exactly %d leading zeros...\n\n", target);
 
   header->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
@@ -223,11 +226,13 @@ struct Header *Header_create(int target, unsigned char *prev_hash,
   printf("\tnonce:\t\t%s\n", nonce);
 
   // ------------------------------- PREV_HASH ---------------------------------
+
   header->prev_hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
   assert(header->prev_hash != NULL);
   memcpy(header->prev_hash, prev_hash, SHA256_BLOCK_SIZE);
 
   // ------------------------------- ROOT_HASH ---------------------------------
+
   block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
@@ -254,6 +259,7 @@ struct Header *Header_create(int target, unsigned char *prev_hash,
   free(nonce);
 
   // ------------------------------- ZERO TEST ---------------------------------
+
   int i = 0;
   int j = 0;
   int k = 0;
@@ -317,7 +323,9 @@ struct Block *Block_create(int target, unsigned char *prev_hash,
   assert(block != NULL);
 
   block->header = Header_create(target, *prev_hash, **transactions[]);
+
   // ----------------------------- TRANSACTIONS --------------------------------
+
   block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);
@@ -341,6 +349,7 @@ struct Block *Block_create(int target, unsigned char *prev_hash,
   memcpy(block->hash, buffer, SHA256_BLOCK_SIZE);
 
   // ----------------------------- TRANSACTIONS --------------------------------
+
   block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
   assert(block->transactions != NULL);
   strcpy(block->transactions, transactions);

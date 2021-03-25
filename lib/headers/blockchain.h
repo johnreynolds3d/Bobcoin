@@ -17,9 +17,9 @@ struct Wallet {
 };
 
 struct Transaction {
-  char *public_key_owner;
+  char *payee_public_key;
   unsigned char *hash_prev_trans;
-  char *signature_prev_owner;
+  char *signature; // payer signs hash_prev_trans + payee_public_key
 };
 
 struct Block {
