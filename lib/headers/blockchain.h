@@ -2,8 +2,8 @@
 #define blockchain_h
 
 struct User {
-  char *user_name;
-  char *user_public_key;
+  unsigned char *user_name;
+  unsigned char *user_public_key;
   unsigned char *user_private_key; // randomly generated
   struct Wallet *wallet;
 };
@@ -13,59 +13,60 @@ struct Wallet {
   unsigned char *wallet_public_key;  // hash of user's private_key
   unsigned char *wallet_private_key; // hash of wallet address
   int balance;
-  struct Transaction *transactions[];
+  // struct Transaction *transactions[];
 };
-
+/*
 struct Transaction {
-  char *payee_public_key;
+  unsigned char *payee_public_key;
   unsigned char *hash_prev_trans;
-  char *signature; // payer signs hash_prev_trans + payee_public_key
+  unsigned char *signature;
 };
-
+*/
 struct Block {
-  int *block_size;
+  unsigned long magic_number;
+  unsigned long block_size;
   struct BlockHeader *block_header;
-  int *transaction_counter;
-  struct Transaction *transactions[];
+  unsigned int transaction_counter;
+  // struct Transaction *transactions[];
 };
 
 struct BlockHeader {
-  double *version;
-  unsigned char *previous_block_hash;
-  unsigned char *merkle_root;
-  char *timestamp;
-  int *difficulty_target;
-  unsigned int *nonce;
+  float version;
+  unsigned char *hash_prev_block;
+  unsigned char *hash_merkle_root;
+  unsigned char *time;
+  unsigned long bits;
+  unsigned long nonce;
 };
 
-unsigned char *Hash_create(unsigned char *buffer, char *text);
+unsigned char *Hash_create(unsigned char *buffer, unsigned char *text);
 
-struct User *User_create(char *user_name);
-
-struct Wallet *Wallet_create(char *user_public_key,
-                             unsigned char *user_private_key);
-
-struct Transaction *Transaction_create(char *owner_public_key,
-                                       unsigned char *previous_transaction_hash,
-                                       char *previous_owner_signature);
-
-struct Block *Block_create(int difficulty_target,
-                           unsigned char *previous_block_hash,
-                           struct Transaction **transactions[]);
-
-struct BlockHeader *BlockHeader_create(int difficulty_target,
-                                       unsigned char *previous_block_hash,
-                                       struct Transaction **transactions[]);
+struct User *User_create(unsigned char *user_name);
 
 void User_print(struct User *user);
 
+void User_destroy(struct User *user);
+
+struct Wallet *Wallet_create(unsigned char *user_public_key,
+                             unsigned char *user_private_key);
+
 void Wallet_print(struct Wallet *wallet);
 
+/*
+struct Transaction *Transaction_create(unsigned char *payee_public_key,
+                                       unsigned char *hash_prev_trans,
+                                       unsigned char *signature);
+
 void Transaction_print(struct Transaction *transaction);
+*/
+
+struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
+                                       unsigned long bits);
+
+struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits);
+// struct Transaction **transactions[]);
 
 void Block_print(struct Block *block);
-
-void User_destroy(struct User *user);
 
 void Block_destroy(struct Block *block);
 

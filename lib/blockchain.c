@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 
-unsigned char *Hash_create(unsigned char *buffer, char *text) {
+unsigned char *Hash_create(unsigned char *buffer, unsigned char *text) {
 
   assert(buffer != NULL && text != NULL);
 
@@ -19,7 +19,7 @@ unsigned char *Hash_create(unsigned char *buffer, char *text) {
 
   SHA256_CTX ctx;
   sha256_init(&ctx);
-  sha256_update(&ctx, (unsigned char *)text, strlen(text));
+  sha256_update(&ctx, text, strlen(text));
   sha256_final(&ctx, buffer);
 
   if (!memcmp(hash, buffer, SHA256_BLOCK_SIZE)) {
@@ -30,7 +30,7 @@ unsigned char *Hash_create(unsigned char *buffer, char *text) {
   return buffer;
 }
 
-struct User *User_create(char *user_name) {
+struct User *User_create(unsigned char *user_name) {
 
   assert(user_name != NULL);
 
@@ -44,13 +44,13 @@ struct User *User_create(char *user_name) {
   user->user_public_key = calloc(33, sizeof(char));
   assert(user->user_public_key != NULL);
 
-  char user_public_key[33] = {'a'};
+  unsigned char user_public_key[33] = {'a'};
 
   user_public_key[0] = 'b';
   user_public_key[1] = 'c';
   user_public_key[2] = '1';
 
-  char alphanum[] =
+  unsigned char alphanum[] =
       "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   int i = 0;
@@ -80,7 +80,7 @@ struct User *User_create(char *user_name) {
   return user;
 }
 
-struct Wallet *Wallet_create(char *user_public_key,
+struct Wallet *Wallet_create(unsigned char *user_public_key,
                              unsigned char *user_private_key) {
 
   struct Wallet *wallet = calloc(1, sizeof(struct Wallet));
@@ -100,7 +100,7 @@ struct Wallet *Wallet_create(char *user_public_key,
   Hash_create(buffer, user_public_key);
   memcpy(wallet->wallet_address, buffer, SHA256_BLOCK_SIZE);
 
-  char *text = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  unsigned char *text = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
 
   int i = 0;
 
@@ -189,164 +189,24 @@ void User_destroy(struct User *user) {
   free(user);
 }
 
-/*
-struct Header *Header_create(int target, unsigned char *prev_hash,
-                             struct Transaction **transactions[]) {
+struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits) {
+  // struct Transaction **transactions[]) {
 
-  assert(prev_hash != NULL && transactions != NULL);
-
-  struct Header *header = calloc(1, sizeof(struct Header));
-  assert(header != NULL);
-
-  // ------------------------------- TIMESTAMP ---------------------------------
-
-  time_t current_time = time(NULL);
-
-  struct tm *time_info = gmtime(&current_time);
-
-  char *gmt = asctime(time_info);
-
-  header->timestamp = calloc(strlen(gmt) + 1, sizeof(char));
-  assert(header->timestamp != NULL);
-
-  strcpy(header->timestamp, gmt);
-
-  // --------------------------------- NONCE -----------------------------------
-
-  printf("\nLooking for exactly %d leading zeros...\n\n", target);
-
-  header->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
-
-  int num_digits = floor((int)log10(fabs((double)header->nonce))) + 1;
-
-  char *nonce = calloc(num_digits + 1, sizeof(char));
-  assert(nonce != NULL);
-
-  sprintf(nonce, "%d", header->nonce);
-  printf("\tnonce:\t\t%s\n", nonce);
-
-  // ------------------------------- PREV_HASH ---------------------------------
-
-  header->prev_hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(header->prev_hash != NULL);
-  memcpy(header->prev_hash, prev_hash, SHA256_BLOCK_SIZE);
-
-  // ------------------------------- ROOT_HASH ---------------------------------
-
-  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
-  assert(block->transactions != NULL);
-  strcpy(block->transactions, transactions);
-
-  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->hash != NULL);
-
-  BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
-
-  char *text =
-      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
-  assert(text != NULL);
-
-  memcpy(text, transactions, strlen(transactions) + 1);
-  strcat(text, nonce);
-
-  printf("\ttext:\t\t%s", text);
-
-  Hash(buffer, transactions);
-
-  memcpy(block->hash, buffer, SHA256_BLOCK_SIZE);
-
-  free(text);
-  free(nonce);
-
-  // ------------------------------- ZERO TEST ---------------------------------
-
-  int i = 0;
-  int j = 0;
-  int k = 0;
-
-  int zero_test[256] = {2};
-
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    for (j = 7; j >= 0; --j) {
-      zero_test[k] = ((block->hash[i] & (1 << j)) ? 1 : 0);
-      k++;
-    }
-  }
-  printf("\n");
-
-  printf("\tzero_test:\t");
-
-  if (target > 0) {
-    for (i = 0; i < target; i++) {
-      printf("%d", zero_test[i]);
-    }
-  }
-
-  printf("\n\n");
-
-  if (target == 0 && zero_test[0] == 1) {
-    printf(
-        "\t\t************ Found exactly %d leading zeros!!! ************\n\n",
-        target);
-    Block_print(block);
-    return block;
-  }
-
-  for (i = 0; i < target; i++) {
-
-    if (zero_test[i] != 0) {
-      printf("Found fewer than %d leading zeros; try again!\n\n", target);
-      break;
-    }
-
-    if (i == target - 1) {
-      if (zero_test[target] != 1) {
-        printf("Found more than %d leading zeros; try again!\n\n", target);
-        break;
-      } else {
-        printf("\t\t************ Found exactly %d leading zeros!!! "
-               "************\n\n",
-               target);
-        Block_print(block);
-        return block;
-      }
-    }
-  }
-}
-
-struct Block *Block_create(int target, unsigned char *prev_hash,
-                           struct Transaction **transactions[]) {
-
-  assert(prev_hash != NULL && transactions != NULL);
+  // assert(hash_prev_block != NULL && transactions != NULL);
+  assert(hash_prev_block != NULL);
 
   struct Block *block = calloc(1, sizeof(struct Block));
   assert(block != NULL);
 
-  block->header = Header_create(target, *prev_hash, **transactions[]);
+  // struct BlockHeader *block_header = calloc(1, sizeof(struct BlockHeader));
+  // assert(block_header != NULL);
 
-  // ----------------------------- TRANSACTIONS --------------------------------
+  block->block_header = BlockHeader_create(hash_prev_block, bits);
+  assert(block->block_header != NULL);
 
-  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
-  assert(block->transactions != NULL);
-  strcpy(block->transactions, transactions);
+  //**transactions[]);
 
-  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->hash != NULL);
-
-  BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
-
-  char *text =
-      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
-  assert(text != NULL);
-
-  memcpy(text, transactions, strlen(transactions) + 1);
-  strcat(text, nonce);
-
-  printf("\ttext:\t\t%s", text);
-
-  Hash(buffer, transactions);
-
-  memcpy(block->hash, buffer, SHA256_BLOCK_SIZE);
+  /*
 
   // ----------------------------- TRANSACTIONS --------------------------------
 
@@ -373,35 +233,94 @@ struct Block *Block_create(int target, unsigned char *prev_hash,
   memcpy(block->hash, buffer, SHA256_BLOCK_SIZE);
 
   return NULL;
+
+  */
+
+  // ------------------------------- ZERO TEST ---------------------------------
+
+  int i = 0;
+  int j = 0;
+  int k = 0;
+
+  unsigned int zero_test[256] = {0};
+
+  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    for (j = 7; j >= 0; --j) {
+      zero_test[k] =
+          ((block->block_header->hash_prev_block[i] & (1 << j)) ? 1 : 0);
+      k++;
+    }
+  }
+  printf("\n");
+
+  printf("\tzero_test:\t");
+
+  if (bits > 0) {
+    for (i = 0; i < bits; i++) {
+      printf("%d", zero_test[i]);
+    }
+  }
+
+  printf("\n\n");
+
+  if (bits == 0 && zero_test[0] == 1) {
+    printf(
+        "\t\t************ Found exactly %lu leading zeros!!! ************\n\n",
+        bits);
+    Block_print(block);
+    return block;
+  }
+
+  for (i = 0; i < bits; i++) {
+
+    if (zero_test[i] != 0) {
+      printf("Found fewer than %lu leading zeros; try again!\n\n", bits);
+      break;
+    }
+
+    if (i == bits - 1) {
+      if (zero_test[bits] != 1) {
+        printf("Found more than %lu leading zeros; try again!\n\n", bits);
+        break;
+      } else {
+        printf("\t\t************ Found exactly %lu leading zeros!!! "
+               "************\n\n",
+               bits);
+        Block_print(block);
+        return block;
+      }
+    }
+  }
 }
 
 void Block_print(struct Block *block) {
 
   assert(block != NULL);
 
-  printf("\ttimestamp:\t%s", block->header->timestamp);
+  printf("\ttime:\t%s", block->block_header->time);
 
   int i = 0;
   int j = 0;
 
-  printf("\tprev_hash:\t");
+  printf("\thash prev block:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", block->header->prev_hash[i]);
+    printf("%.2x", block->block_header->hash_prev_block[i]);
   }
   printf("\n");
 
-  printf("\ttransactions:\t%s\n", block->transactions);
+  // printf("\ttransactions:\t%s\n", block->transactions);
 
-  printf("\ttx_hash:\t");
+  printf("\thash merkle root:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", block->hash[i]);
+    printf("%.2x", block->block_header->hash_merkle_root[i]);
   }
   printf("\n");
 
-  printf("\ttx_hash binary:\t");
+  printf("\thmr binary:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     for (j = 7; j >= 0; --j) {
-      putchar((block->hash[i] & (1 << j)) ? '1' : '0');
+      putchar((block->block_header->hash_merkle_root[i] & (1 << j)) ? '1'
+                                                                    : '0');
     }
   }
   printf("\n");
@@ -411,13 +330,92 @@ void Block_destroy(struct Block *block) {
 
   assert(block != NULL);
 
-  free(block->header->timestamp);
+  free(block->block_header->hash_prev_block);
+  free(block->block_header->hash_merkle_root);
+  free(block->block_header->time);
   // free(block->transactions);
-  // free(block->prev_hash);
-  // free(block->hash);
-
-  free(block->header);
+  free(block->block_header);
 
   free(block);
 }
-*/
+
+struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
+                                       unsigned long bits) {
+
+  // assert(hash_prev_block != NULL && transactions != NULL);
+  assert(hash_prev_block != NULL);
+
+  struct BlockHeader *block_header = calloc(1, sizeof(struct BlockHeader));
+  assert(block_header != NULL);
+
+  block_header->version = 1;
+
+  // --------------------------------- TIME ------------------------------------
+
+  time_t current_time = time(NULL);
+
+  struct tm *time_info = gmtime(&current_time);
+
+  unsigned char *gmt = asctime(time_info);
+
+  block_header->time = calloc(strlen(gmt) + 1, sizeof(char));
+  assert(block_header->time != NULL);
+
+  strcpy(block_header->time, gmt);
+
+  // --------------------------------- NONCE -----------------------------------
+
+  printf("\nLooking for exactly %lu leading zeros...\n\n", bits);
+
+  /*
+  block_header->nonce = rand() % (((int)pow(2, 32) - 1) + 1 - 0) + 0;
+
+  unsigned long bits = floor((int)log10(fabs((double)header->nonce))) + 1;
+
+  sprintf(nonce, "%d", block_header->nonce);
+  printf("\tnonce:\t\t%s\n", block_header->nonce);
+  */
+
+  block_header->bits = bits;
+  printf("\tbits:\t\t%lu\n", block_header->bits);
+
+  block_header->nonce = 0;
+  printf("\tnonce:\t\t%lu\n", block_header->nonce);
+
+  // ---------------------------- HASH_PREV_BLOCK ------------------------------
+
+  block_header->hash_prev_block = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  assert(block_header->hash_prev_block != NULL);
+  memcpy(block_header->hash_prev_block, hash_prev_block, SHA256_BLOCK_SIZE);
+
+  /*
+  // ---------------------------- HASH_MERKLE_ROOT -----------------------------
+
+  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
+  assert(block->transactions != NULL);
+  strcpy(block->transactions, transactions);
+
+  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  assert(block->hash != NULL);
+
+  BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
+
+  unsigned char *text =
+      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
+  assert(text != NULL);
+
+  memcpy(text, transactions, strlen(transactions) + 1);
+  strcat(text, nonce);
+
+  printf("\ttext:\t\t%s", text);
+
+  Hash(buffer, transactions);
+
+  memcpy(block_header->hash_prev_block, buffer, SHA256_BLOCK_SIZE);
+
+  free(text);
+  free(nonce);
+  */
+
+  return block_header;
+}
