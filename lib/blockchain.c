@@ -89,10 +89,8 @@ struct Wallet *Wallet_create(struct User *user) {
   wallet->wallet_private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(wallet->wallet_private_key != NULL);
 
-  /*
   wallet->wallet_transactions = calloc(1, sizeof(struct Transaction));
   assert(wallet->wallet_transactions != NULL);
-  */
 
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
 
@@ -110,7 +108,6 @@ struct Wallet *Wallet_create(struct User *user) {
   return wallet;
 }
 
-/*
 struct Transaction *Transaction_create(unsigned char *payee_public_key,
                                        unsigned char *hash_prev_trans,
                                        unsigned char *signature) {
@@ -121,24 +118,21 @@ struct Transaction *Transaction_create(unsigned char *payee_public_key,
   struct Transaction *transaction = calloc(1, sizeof(struct Transaction));
   assert(transaction != NULL);
 
-  transaction->payee_public_key = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  transaction->payee_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->payee_public_key != NULL);
 
-  transaction->hash_prev_trans = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  transaction->hash_prev_trans = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->hash_prev_trans != NULL);
 
-  transaction->signature = calloc(SHA256_BLOCK_SIZE, sizeof(char));
+  transaction->signature = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->signature != NULL);
 
-  memcpy(transaction->payee_public_key, payee_public_key, SHA256_BLOCK_SIZE);
-
-  memcpy(transaction->hash_prev_trans, hash_prev_trans, SHA256_BLOCK_SIZE);
-
-  memcpy(transaction->signature, signature, SHA256_BLOCK_SIZE);
+  strcpy(transaction->payee_public_key, payee_public_key);
+  strcpy(transaction->hash_prev_trans, hash_prev_trans);
+  strcpy(transaction->signature, signature);
 
   return transaction;
 }
-*/
 
 /*
 struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
@@ -360,8 +354,7 @@ void User_destroy(struct User *user) {
 
   assert(user != NULL);
 
-  // free(user->user_wallet->wallet_transactions);
-
+  free(user->user_wallet->wallet_transactions);
   free(user->user_wallet->wallet_private_key);
   free(user->user_wallet->wallet_public_key);
   free(user->user_wallet->wallet_address);
@@ -373,7 +366,6 @@ void User_destroy(struct User *user) {
   free(user);
 }
 
-/*
 void Transaction_print(struct Transaction *transaction) {
 
   assert(transaction != NULL);
@@ -400,7 +392,6 @@ void Transaction_print(struct Transaction *transaction) {
   }
   printf("\n");
 }
-*/
 
 /*
 void Block_print(struct Block *block) {

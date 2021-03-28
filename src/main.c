@@ -12,14 +12,17 @@ int main() {
 
   // -------------------------------- USERS -----------------------------------
 
-  unsigned int num_users = 4;
+  unsigned int num_users = 1;
 
   struct User *users[num_users];
 
   users[0] = User_create("Bob");
+
+  /*
   users[1] = User_create("Laura Palmer");
   users[2] = User_create("Dale Cooper");
   users[3] = User_create("Windom Earle");
+  */
 
   unsigned int i = 0;
 
@@ -31,7 +34,6 @@ int main() {
 
   //------------------------------ TRANSACTIONS --------------------------------
 
-  /*
   unsigned int num_transactions = 1;
 
   struct Transaction *transactions[num_transactions];
@@ -46,11 +48,14 @@ int main() {
 
   // transactions[1] = Transaction_create(users[1]->user_public_key);
 
+  free(signature);
+
   for (i = 0; i < num_transactions; i++) {
     Transaction_print(transactions[i]);
   }
   printf("\n");
 
+  /*
   //-------------------------------- BLOCKS ------------------------------------
 
   unsigned int num_blocks = 2;
@@ -108,7 +113,12 @@ int main() {
     User_destroy(users[i]);
   }
 
-  // free(signature);
+  for (i = 0; i < num_transactions; i++) {
+    free(transactions[i]->payee_public_key);
+    free(transactions[i]->hash_prev_trans);
+    free(transactions[i]->signature);
+    free(transactions[i]);
+  }
 
   /*
   if (blockchain[3] == NULL) {
