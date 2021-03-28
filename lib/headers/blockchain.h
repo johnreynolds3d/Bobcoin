@@ -3,31 +3,23 @@
 
 struct User {
   unsigned char *user_name;
-  unsigned char *user_public_key;
+  unsigned char *user_public_key;  // randomly generated
   unsigned char *user_private_key; // randomly generated
-  struct Wallet *wallet;
+  struct Wallet *user_wallet;
 };
 
 struct Wallet {
   unsigned char *wallet_address;     // hash of user's public_key
   unsigned char *wallet_public_key;  // hash of user's private_key
   unsigned char *wallet_private_key; // hash of wallet address
-  int balance;
-  // struct Transaction *transactions[];
+  unsigned int wallet_balance;
+  struct Transaction *wallet_transactions;
 };
-/*
+
 struct Transaction {
   unsigned char *payee_public_key;
   unsigned char *hash_prev_trans;
   unsigned char *signature;
-};
-*/
-struct Block {
-  unsigned long magic_number;
-  unsigned long block_size;
-  struct BlockHeader *block_header;
-  unsigned int transaction_counter;
-  // struct Transaction *transactions[];
 };
 
 struct BlockHeader {
@@ -39,34 +31,39 @@ struct BlockHeader {
   unsigned long nonce;
 };
 
-unsigned char *Hash_create(unsigned char *buffer, unsigned char *text);
+struct Block {
+  unsigned long magic_number;
+  unsigned long block_size;
+  struct BlockHeader *block_header;
+  unsigned int transaction_counter;
+  struct Transaction *transactions;
+};
+
+unsigned char *GetHash(unsigned char *buffer, unsigned char *text);
 
 struct User *User_create(unsigned char *user_name);
 
-void User_print(struct User *user);
+struct Wallet *Wallet_create(struct User *user);
 
-void User_destroy(struct User *user);
-
-struct Wallet *Wallet_create(unsigned char *user_public_key,
-                             unsigned char *user_private_key);
-
-void Wallet_print(struct Wallet *wallet);
-
-/*
 struct Transaction *Transaction_create(unsigned char *payee_public_key,
                                        unsigned char *hash_prev_trans,
                                        unsigned char *signature);
 
-void Transaction_print(struct Transaction *transaction);
-*/
-
 struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                        unsigned long bits);
 
-struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits);
-// struct Transaction **transactions[]);
+struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
+                           struct Transaction **transactions);
+
+void User_print(struct User *user);
+
+void Wallet_print(struct Wallet *wallet);
+
+void Transaction_print(struct Transaction *transaction);
 
 void Block_print(struct Block *block);
+
+void User_destroy(struct User *user);
 
 void Block_destroy(struct Block *block);
 
