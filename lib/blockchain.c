@@ -1,4 +1,5 @@
 #include "headers/blockchain.h"
+#include "headers/ecdsa.h"
 #include "headers/sha256.h"
 #include <assert.h>
 #include <math.h>
@@ -30,45 +31,45 @@ unsigned char *GetHash(unsigned char *buffer, unsigned char *text) {
   return buffer;
 }
 
-struct User *User_create(unsigned char *user_name) {
+struct User *User_create(unsigned char *name) {
 
-  assert(user_name != NULL);
+  assert(name != NULL);
 
   struct User *user = calloc(1, sizeof(struct User));
   assert(user != NULL);
 
-  user->user_name = calloc(strlen(user_name) + 1, sizeof(char));
-  assert(user->user_name != NULL);
+  user->name = calloc(strlen(name) + 1, sizeof(char));
+  assert(user->name != NULL);
 
-  user->user_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(user->user_public_key != NULL);
+  user->public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(user->public_key != NULL);
 
-  user->user_private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(user->user_private_key != NULL);
+  user->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(user->private_key != NULL);
 
-  strcpy(user->user_name, user_name);
+  strcpy(user->name, name);
 
-  user->user_public_key[0] = 'b';
-  user->user_public_key[1] = 'c';
-  user->user_public_key[2] = '1';
+  user->public_key[0] = 'b';
+  user->public_key[1] = 'c';
+  user->public_key[2] = '1';
 
   unsigned char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
   unsigned int i = 0;
 
   for (i = 3; i < SHA256_BLOCK_SIZE; i++) {
-    user->user_public_key[i] =
+    user->public_key[i] =
         alphanum[rand() % ((strlen(alphanum) - 1) - 0 + 1) + 0];
   }
-  user->user_public_key[SHA256_BLOCK_SIZE] = '\0';
+  user->public_key[SHA256_BLOCK_SIZE] = '\0';
 
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    user->user_private_key[i] =
+    user->private_key[i] =
         alphanum[rand() % ((strlen(alphanum) - 1) - 0 + 1) + 0];
   }
-  user->user_private_key[SHA256_BLOCK_SIZE] = '\0';
+  user->private_key[SHA256_BLOCK_SIZE] = '\0';
 
-  user->user_wallet = Wallet_create(user);
+  user->wallet = Wallet_create(user);
 
   return user;
 }
@@ -80,56 +81,65 @@ struct Wallet *Wallet_create(struct User *user) {
   struct Wallet *wallet = calloc(1, sizeof(struct Wallet));
   assert(wallet != NULL);
 
-  wallet->wallet_address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(wallet->wallet_address != NULL);
+  wallet->address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(wallet->address != NULL);
 
-  wallet->wallet_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(wallet->wallet_public_key != NULL);
+  wallet->public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(wallet->public_key != NULL);
 
-  wallet->wallet_private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(wallet->wallet_private_key != NULL);
+  wallet->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(wallet->private_key != NULL);
 
-  wallet->wallet_transactions = calloc(1, sizeof(struct Transaction));
-  assert(wallet->wallet_transactions != NULL);
+  wallet->transactions = calloc(1, sizeof(struct Transaction));
+  assert(wallet->transactions != NULL);
 
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
 
-  GetHash(buffer, user->user_public_key);
-  memcpy(wallet->wallet_address, buffer, SHA256_BLOCK_SIZE);
+  GetHash(buffer, user->public_key);
+  memcpy(wallet->address, buffer, SHA256_BLOCK_SIZE);
 
-  GetHash(buffer, user->user_private_key);
-  memcpy(wallet->wallet_public_key, buffer, SHA256_BLOCK_SIZE);
+  GetHash(buffer, user->private_key);
+  memcpy(wallet->public_key, buffer, SHA256_BLOCK_SIZE);
 
-  GetHash(buffer, wallet->wallet_address);
-  memcpy(wallet->wallet_private_key, buffer, SHA256_BLOCK_SIZE);
+  GetHash(buffer, wallet->address);
+  memcpy(wallet->private_key, buffer, SHA256_BLOCK_SIZE);
 
-  wallet->wallet_balance = 0;
+  wallet->balance = 0;
 
   return wallet;
 }
 
-struct Transaction *Transaction_create(unsigned char *payee_public_key,
-                                       unsigned char *hash_prev_trans,
-                                       unsigned char *signature) {
+struct Transaction *Transaction_create(struct User *payer, struct User *payee,
+                                       unsigned long amount) {
 
-  assert(payee_public_key != NULL && hash_prev_trans != NULL &&
-         signature != NULL);
+  assert(payer != NULL && payee != NULL);
 
   struct Transaction *transaction = calloc(1, sizeof(struct Transaction));
   assert(transaction != NULL);
 
-  transaction->payee_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(transaction->payee_public_key != NULL);
+  transaction->payee_address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(transaction->payee_address != NULL);
 
-  transaction->hash_prev_trans = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(transaction->hash_prev_trans != NULL);
+  transaction->payer_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(transaction->payer_public_key != NULL);
 
-  transaction->signature = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
-  assert(transaction->signature != NULL);
+  transaction->payer_signature = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  assert(transaction->payer_signature != NULL);
 
-  strcpy(transaction->payee_public_key, payee_public_key);
-  strcpy(transaction->hash_prev_trans, hash_prev_trans);
-  strcpy(transaction->signature, signature);
+  BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
+
+  memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
+  memcpy(transaction->payer_public_key, payer->public_key, SHA256_BLOCK_SIZE);
+  memcpy(transaction->payer_signature, GetHash(buffer, payer->private_key),
+         SHA256_BLOCK_SIZE);
+
+  transaction->amount = amount;
+
+  // memcpy(payee->wallet->transactions, transaction, sizeof(struct
+  // Transaction));
+
+  payee->wallet->balance += amount;
+  payer->wallet->balance -= amount;
 
   return transaction;
 }
@@ -306,63 +316,63 @@ void User_print(struct User *user) {
 
   assert(user != NULL);
 
-  printf("\n\tuser name:\t\t%s\n", user->user_name);
+  printf("\n\tuser name:\t\t%s\n", user->name);
 
   unsigned int i = 0;
 
   printf("\tuser public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", user->user_public_key[i]);
+    printf("%.2x", user->public_key[i]);
   }
   printf("\n");
 
   printf("\tuser private key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", user->user_private_key[i]);
+    printf("%.2x", user->private_key[i]);
   }
   printf("\n");
 }
 
-void Wallet_print(struct Wallet *wallet) {
+void Wallet_print(struct User *user) {
 
-  assert(wallet != NULL);
+  assert(user != NULL);
 
   unsigned int i = 0;
 
   printf("\twallet address:\t\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", wallet->wallet_address[i]);
+    printf("%.2x", user->wallet->address[i]);
   }
   printf("\n");
 
   printf("\twallet public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", wallet->wallet_public_key[i]);
+    printf("%.2x", user->wallet->public_key[i]);
   }
   printf("\n");
 
   printf("\twallet private key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", wallet->wallet_private_key[i]);
+    printf("%.2x", user->wallet->private_key[i]);
   }
   printf("\n");
 
-  printf("\twallet balance:\t\t%d\n", wallet->wallet_balance);
+  printf("\twallet balance:\t\t%lu\n", user->wallet->balance);
 }
 
 void User_destroy(struct User *user) {
 
   assert(user != NULL);
 
-  free(user->user_wallet->wallet_transactions);
-  free(user->user_wallet->wallet_private_key);
-  free(user->user_wallet->wallet_public_key);
-  free(user->user_wallet->wallet_address);
-  free(user->user_wallet);
+  free(user->wallet->transactions);
+  free(user->wallet->private_key);
+  free(user->wallet->public_key);
+  free(user->wallet->address);
+  free(user->wallet);
 
-  free(user->user_private_key);
-  free(user->user_public_key);
-  free(user->user_name);
+  free(user->private_key);
+  free(user->public_key);
+  free(user->name);
   free(user);
 }
 
@@ -374,21 +384,23 @@ void Transaction_print(struct Transaction *transaction) {
 
   printf("Transaction:\n");
 
-  printf("\tpayee public key:\t");
+  printf("\tpayee address:\t\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", transaction->payee_public_key[i]);
+    printf("%.2x", transaction->payee_address[i]);
   }
   printf("\n");
 
-  printf("\thash prev trans:\t");
+  printf("\tamount:\t\t\t%lu\n", transaction->amount);
+
+  printf("\tpayer public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", transaction->hash_prev_trans[i]);
+    printf("%.2x", transaction->payer_public_key[i]);
   }
   printf("\n");
 
-  printf("\tsignature:\t\t");
+  printf("\tpayer signature:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", transaction->signature[i]);
+    printf("%.2x", transaction->payer_signature[i]);
   }
   printf("\n");
 }
@@ -400,8 +412,8 @@ void Block_print(struct Block *block) {
 
   printf("\ttime:\t%s", block->block_header->time);
 
-  int i = 0;
-  int j = 0;
+  unsigned int i = 0;
+  unsigned int j = 0;
 
   printf("\thash prev block:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {

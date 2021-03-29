@@ -12,46 +12,46 @@ int main() {
 
   // -------------------------------- USERS -----------------------------------
 
-  unsigned int num_users = 1;
+  unsigned int num_users = 4;
 
   struct User *users[num_users];
 
-  users[0] = User_create("Bob");
+  users[0] = User_create("BOB");
+  users[1] = User_create("Windom Earle");
+  users[2] = User_create("Laura Palmer");
+  users[3] = User_create("Dale Cooper");
 
-  /*
-  users[1] = User_create("Laura Palmer");
-  users[2] = User_create("Dale Cooper");
-  users[3] = User_create("Windom Earle");
-  */
+  // BOB (AKA... SATOSHI NAKAMOTO!) creates the first 100 coins
+  users[0]->wallet->balance = 100;
 
   unsigned int i = 0;
 
   for (i = 0; i < num_users; i++) {
     User_print(users[i]);
-    Wallet_print(users[i]->user_wallet);
+    Wallet_print(users[i]);
   }
   printf("\n");
 
   //------------------------------ TRANSACTIONS --------------------------------
 
-  unsigned int num_transactions = 1;
+  unsigned int num_transactions = 2;
 
   struct Transaction *transactions[num_transactions];
 
-  unsigned char genesis[] = "";
+  // BOB sends Windom Earle 25 coins
+  transactions[0] = Transaction_create(users[0], users[1], 25);
 
-  unsigned char *signature = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(signature != NULL);
-
-  transactions[0] =
-      Transaction_create(users[0]->user_public_key, genesis, signature);
-
-  // transactions[1] = Transaction_create(users[1]->user_public_key);
-
-  free(signature);
+  // BOB sends Laura 10 coins
+  transactions[1] = Transaction_create(users[0], users[2], 10);
 
   for (i = 0; i < num_transactions; i++) {
     Transaction_print(transactions[i]);
+    printf("\n");
+  }
+
+  for (i = 0; i < num_users; i++) {
+    User_print(users[i]);
+    Wallet_print(users[i]);
   }
   printf("\n");
 
@@ -114,9 +114,9 @@ int main() {
   }
 
   for (i = 0; i < num_transactions; i++) {
-    free(transactions[i]->payee_public_key);
-    free(transactions[i]->hash_prev_trans);
-    free(transactions[i]->signature);
+    free(transactions[i]->payee_address);
+    free(transactions[i]->payer_public_key);
+    free(transactions[i]->payer_signature);
     free(transactions[i]);
   }
 
