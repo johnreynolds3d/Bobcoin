@@ -47,7 +47,7 @@ struct User *User_create(unsigned char *name) {
   user->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(user->private_key != NULL);
 
-  strcpy(user->name, name);
+  memcpy(user->name, name, strlen(name) + 1);
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
