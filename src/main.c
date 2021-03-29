@@ -21,16 +21,8 @@ int main() {
   users[2] = User_create("Laura Palmer");
   users[3] = User_create("Dale Cooper");
 
-  // BOB (AKA... SATOSHI NAKAMOTO!) creates the first 100 coins
+  // BOB (AKA... SATOSHI NAKAMOTO!) creates the first 100 coins...
   users[0]->wallet->balance = 100;
-
-  unsigned int i = 0;
-
-  for (i = 0; i < num_users; i++) {
-    User_print(users[i]);
-    Wallet_print(users[i]);
-  }
-  printf("\n");
 
   //------------------------------ TRANSACTIONS --------------------------------
 
@@ -38,11 +30,15 @@ int main() {
 
   struct Transaction *transactions[num_transactions];
 
-  // BOB sends Windom Earle 25 coins
+  // BOB sends Windom Earle 25 coins...
   transactions[0] = Transaction_create(users[0], users[1], 25);
 
-  // BOB sends Laura 10 coins
+  // BOB sends Laura 10 coins...
   transactions[1] = Transaction_create(users[0], users[2], 10);
+
+  printf("\n");
+
+  unsigned int i = 0;
 
   for (i = 0; i < num_transactions; i++) {
     Transaction_print(transactions[i]);
@@ -52,8 +48,8 @@ int main() {
   for (i = 0; i < num_users; i++) {
     User_print(users[i]);
     Wallet_print(users[i]);
+    printf("\n");
   }
-  printf("\n");
 
   /*
   //-------------------------------- BLOCKS ------------------------------------

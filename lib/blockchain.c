@@ -126,12 +126,65 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   transaction->payer_signature = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->payer_signature != NULL);
 
-  BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
-
   memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
   memcpy(transaction->payer_public_key, payer->public_key, SHA256_BLOCK_SIZE);
-  memcpy(transaction->payer_signature, GetHash(buffer, payer->private_key),
-         SHA256_BLOCK_SIZE);
+
+  // ----------------------------- SIGNATURE -----------------------------------
+
+  // copy transaction amount into a buffer
+  int a = snprintf(NULL, 0, "%lu", amount);
+  assert(a > 0);
+
+  unsigned char a_buffer[a + 1];
+  snprintf(a_buffer, a + 1, "%lu", amount);
+  assert(a_buffer[a] == '\0');
+
+  printf("\nTransaction amount:\t\t%s\n", a_buffer);
+
+  // copy transaction time into a buffer
+  int t = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
+  assert(t > 0);
+
+  unsigned char t_buffer[t + 1];
+  snprintf(t_buffer, t + 1, "%lu", (unsigned long)time(NULL));
+  assert(t_buffer[t] == '\0');
+
+  printf("Transaction time:\t\t%s\n", t_buffer);
+
+  // concatenate payee_address, amount, and timestamp for hashing
+  unsigned char text[(SHA256_BLOCK_SIZE + 1) + (t + 1) + (a + 1)];
+
+  memcpy(text, transaction->payee_address,
+         strlen(transaction->payee_address) + 1);
+
+  strcat(text, a_buffer);
+  strcat(text, t_buffer);
+
+  int i = 0;
+
+  printf("Text before hashing:\t\t");
+  for (i = 0; i < strlen(text); i++) {
+    printf("%.2x", text[i]);
+  }
+  printf("\n");
+
+  BYTE buffer[SHA256_BLOCK_SIZE];
+
+  // memcpy(transaction->payer_signature, GetHash(buffer, payer->private_key),
+  // SHA256_BLOCK_SIZE);
+
+  GetHash(buffer, text);
+
+  printf("Trying out ECDSA on hash:\t%lu\n", (unsigned long)buffer);
+  /*
+  printf("Trying out ECDSA on hash:\t");
+  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+    printf("%.2x", buffer[i]);
+  }
+  printf("\n");
+  */
+
+  GetSignature((unsigned long)buffer);
 
   transaction->amount = amount;
 
@@ -316,7 +369,7 @@ void User_print(struct User *user) {
 
   assert(user != NULL);
 
-  printf("\n\tuser name:\t\t%s\n", user->name);
+  printf("\tuser name:\t\t%s\n", user->name);
 
   unsigned int i = 0;
 

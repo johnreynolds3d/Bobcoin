@@ -3,15 +3,15 @@
 
 struct User {
   unsigned char *name;
-  unsigned char *public_key;  // randomly generated
-  unsigned char *private_key; // randomly generated
+  unsigned char *public_key;
+  unsigned char *private_key;
   struct Wallet *wallet;
 };
 
 struct Wallet {
-  unsigned char *address;     // hash of user's public_key
-  unsigned char *public_key;  // hash of user's private_key
-  unsigned char *private_key; // hash of wallet address
+  unsigned char *address;
+  unsigned char *public_key;
+  unsigned char *private_key;
   struct Transaction *transactions;
   unsigned long balance;
 };
