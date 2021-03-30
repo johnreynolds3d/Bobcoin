@@ -44,7 +44,7 @@ long exgcd(long v, long u) {
   }
 
   if (u != 1) {
-    printf(" impossible inverse mod N, gcd = %ld\n", u);
+    printf("\timpossible inverse mod N, gcd = %ld\n", u);
     inverr = 1;
   }
 
@@ -198,11 +198,11 @@ int ellinit(long i[]) {
   if (e.r < 5 || e.r > mxr) {
     return 0;
   }
-
-  printf("\nE: y^2 = x^3 + %ldx + %ld", a, b);
+  printf("\nInitialize elliptic curve:\n");
+  printf("\tE: y^2 = x^3 + %ldx + %ld", a, b);
   printf(" (mod %lld)\n", e.N);
-  pprint("base point G", e.G);
-  printf("order(G, E) = %lld\n", e.r);
+  pprint("\tbase point G", e.G);
+  printf("\torder(G, E) = %lld\n", e.r);
 
   return 1;
 }
@@ -221,7 +221,7 @@ pair signature(dlong s, long f) {
   pair sg;
   epnt V;
 
-  printf("\nsignature computation\n");
+  printf("\nSignature computation:\n");
 
   do {
     do {
@@ -235,8 +235,8 @@ pair signature(dlong s, long f) {
 
   } while (d == 0);
 
-  printf("one-time u = %ld\n", u);
-  pprint("V = uG", V);
+  printf("\tone-time u = %ld\n", u);
+  pprint("\tV = uG", V);
 
   sg.a = c;
   sg.b = d;
@@ -265,22 +265,22 @@ int verify(epnt W, long f, pair sg) {
     return 0;
   }
 
-  printf("\nsignature verification\n");
+  printf("\nSignature verification:\n");
 
   h = exgcd(d, e.r);
   h1 = modr(f * h);
   h2 = modr(c * h);
 
-  printf("h1,h2 = %ld, %ld\n", h1, h2);
+  printf("\th1,h2 = %ld, %ld\n", h1, h2);
 
   pmul(&V, e.G, h1);
   pmul(&V2, W, h2);
 
-  pprint("h1G", V);
-  pprint("h2W", V2);
+  pprint("\th1G", V);
+  pprint("\th2W", V2);
 
   padd(&V, V, V2);
-  pprint("+ =", V);
+  pprint("\t+ =", V);
 
   if (isO(V)) {
     return 0;
@@ -288,7 +288,7 @@ int verify(epnt W, long f, pair sg) {
 
   c1 = modr(V.x);
 
-  printf("c' = %ld\n", c1);
+  printf("\tc' = %ld\n", c1);
 
   return (c1 == c);
 }
@@ -316,14 +316,14 @@ void ec_dsa(long f, long d) {
     goto errmsg;
   }
 
-  printf("\nkey generation\n");
+  printf("\nKey generation:\n");
 
   s = 1 + (long)(rnd() * (e.r - 1));
 
   pmul(&W, e.G, s);
 
-  printf("private key s = %ld\n", s);
-  pprint("public key W = sG", W);
+  printf("\tprivate key s = %ld\n", s);
+  pprint("\tpublic key W  = sG", W);
 
   // next highest power of 2 - 1
   t = e.r;
@@ -336,7 +336,7 @@ void ec_dsa(long f, long d) {
     f >>= 1;
   }
 
-  printf("\naligned hash %ld\n", f);
+  printf("\n\taligned hash:   %ld\n", f);
 
   sg = signature(s, f);
 
@@ -344,7 +344,7 @@ void ec_dsa(long f, long d) {
     goto errmsg;
   }
 
-  printf("signature c,d = %ld, %ld\n", sg.a, sg.b);
+  printf("\tsignature c,d = %ld, %ld\n", sg.a, sg.b);
 
   if (d > 0) {
     while (d > t) {
@@ -352,7 +352,7 @@ void ec_dsa(long f, long d) {
     }
     f ^= d;
 
-    printf("\ncorrupted hash %ld\n", f);
+    printf("\nCorrupted hash: %ld\n", f);
   }
 
   t = verify(W, f, sg);
@@ -362,18 +362,18 @@ void ec_dsa(long f, long d) {
   }
 
   if (t) {
-    printf("Valid\n_____\n");
+    printf("\n\tValid\n\t_____\n");
   }
 
   else {
-    printf("invalid\n_______\n");
+    printf("\n\tInvalid\n\t_______\n");
   }
 
   return;
 
 errmsg:
-  printf("invalid parameter set\n");
-  printf("_____________________\n");
+  printf("\n\tInvalid parameter set\n");
+  printf("\t_____________________\n");
 }
 
 void GetSignature(long f) {
@@ -387,12 +387,12 @@ void GetSignature(long f) {
 
   /*
    * Test vectors:
-   *    elliptic curve domain parameters,
+   *    elliptic curve domain parameters
    *    short Weierstrass model y^2 * = x^3 + ax + b (mod N)
    */
   eparm *sp;
 
-  eparm sets[10] = {
+  eparm sets[5] = {
 
       // a, b, modulus N, base point G, order(G, E), cofactor
       {355, 671, 1073741789, 13693, 10088, 1073807281},
@@ -401,6 +401,7 @@ void GetSignature(long f) {
       {0, 14, 22651, 63, 30, 151}, // 151
       {3, 2, 5, 2, 1, 5},
 
+      /*
       // ecdsa may fail if:
       //   the base point is of composite order
       {0, 7, 67096021, 2402, 6067, 33539822}, // 2
@@ -410,6 +411,7 @@ void GetSignature(long f) {
       {0, 7, 877069, 3, 97123, 877069},
       //   fails if the modulus divides the discriminant
       {39, 387, 22651, 95, 27, 22651},
+      */
   };
 
   // digital signature on message hash f
