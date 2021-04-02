@@ -22,10 +22,10 @@ int main() {
   printf("\n\t\t\t\t\t   Population 51,201\n");
   printf("\nSay hello to our users!\n");
 
-  users[0] = User_create((unsigned char *)"BOB");
-  users[1] = User_create((unsigned char *)"Windom Earle");
-  users[2] = User_create((unsigned char *)"Laura Palmer");
-  users[3] = User_create((unsigned char *)"Dale Cooper");
+  users[0] = User_create("BOB");
+  users[1] = User_create("Windom Earle");
+  users[2] = User_create("Laura Palmer");
+  users[3] = User_create("Dale Cooper");
 
   printf(
       "\nTransaction 0: BOB (AKA... SATOSHI NAKAMOTO!) creates the first 100 "

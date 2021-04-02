@@ -271,7 +271,7 @@ int verify(epnt W, long f, pair sg) {
   h1 = modr(f * h);
   h2 = modr(c * h);
 
-  printf("\th1,h2 = %ld, %ld\n", h1, h2);
+  printf("\th1, h2 = %ld, %ld\n", h1, h2);
 
   pmul(&V, e.G, h1);
   pmul(&V2, W, h2);
@@ -323,7 +323,7 @@ void ec_dsa(long f, long d) {
   pmul(&W, e.G, s);
 
   printf("\tprivate key s = %ld\n", s);
-  pprint("\tpublic key W  = sG", W);
+  pprint("\tpublic key W = sG", W);
 
   // next highest power of 2 - 1
   t = e.r;
@@ -336,7 +336,7 @@ void ec_dsa(long f, long d) {
     f >>= 1;
   }
 
-  printf("\n\taligned hash:   %ld\n", f);
+  printf("\n\taligned hash: %ld\n", f);
 
   sg = signature(s, f);
 
@@ -344,7 +344,7 @@ void ec_dsa(long f, long d) {
     goto errmsg;
   }
 
-  printf("\tsignature c,d = %ld, %ld\n", sg.a, sg.b);
+  printf("\tsignature c, d = %ld, %ld\n", sg.a, sg.b);
 
   if (d > 0) {
     while (d > t) {
@@ -362,11 +362,11 @@ void ec_dsa(long f, long d) {
   }
 
   if (t) {
-    printf("\n\tValid\n\t_____\n");
+    printf("\n\tVALID\n\t_____\n");
   }
 
   else {
-    printf("\n\tInvalid\n\t_______\n");
+    printf("\n\tINVALID\n\t_______\n");
   }
 
   return;

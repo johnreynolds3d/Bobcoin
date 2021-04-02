@@ -131,55 +131,55 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
   memcpy(transaction->payer_public_key, payer->public_key, SHA256_BLOCK_SIZE);
 
-  // ----------------------------- SIGNATURE -----------------------------------
+  printf("\nTransaction pending:\n");
+
+  // ------------------------------ HASHING ------------------------------------
 
   // concatenate address, amount, and time into a string for hashing
-  int a = snprintf(NULL, 0, "%lu", amount);
-  assert(a > 0);
+  int size_amount = snprintf(NULL, 0, "%lu", amount);
+  assert(size_amount > 0);
 
-  unsigned char a_buffer[a];
-  snprintf(a_buffer, a, "%lu", amount);
+  unsigned char amount_buffer[size_amount + 1];
+  snprintf(amount_buffer, size_amount + 1, "%lu", amount);
+  printf("\ttransaction amount:\t%s\n", amount_buffer);
 
-  int t = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
-  assert(t > 0);
+  int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
+  assert(size_time > 0);
 
-  unsigned char t_buffer[t];
-  snprintf(t_buffer, t, "%lu", (unsigned long)time(NULL));
+  unsigned char time_buffer[size_time];
+  snprintf(time_buffer, size_time, "%lu", (unsigned long)time(NULL));
+  printf("\ttransaction time:\t%s\n", time_buffer);
 
-  unsigned char *text = calloc((SHA256_BLOCK_SIZE) + (t) + (a), sizeof(char));
+  unsigned char *text_buffer =
+      calloc(SHA256_BLOCK_SIZE + size_time + size_amount, sizeof(char));
+  assert(text_buffer != NULL);
 
-  memcpy(text, transaction->payee_address, SHA256_BLOCK_SIZE);
-
-  strcat(text, t_buffer);
-  strcat(text, a_buffer);
-
-  printf("\n\ttransaction time:\t%s\n", t_buffer);
+  memcpy(text_buffer, transaction->payee_address, SHA256_BLOCK_SIZE);
+  strcat(text_buffer, time_buffer);
+  strcat(text_buffer, amount_buffer);
 
   unsigned int i = 0;
 
-  printf("\ttext before hashing:\t");
-  for (i = 0; i < strlen(text); i++) {
-    printf("%.2x", text[i]);
+  printf("\ttransaction text:\t");
+  for (i = 0; i < strlen(text_buffer); i++) {
+    printf("%.2x", text_buffer[i]);
   }
   printf("\n");
 
-  BYTE buffer[SHA256_BLOCK_SIZE];
+  unsigned char hash_buffer[SHA256_BLOCK_SIZE] = {'0'};
 
-  GetHash(buffer, text);
+  GetHash(hash_buffer, text_buffer);
 
-  printf("\ttext after hashing:\t");
+  printf("\ttransaction hash:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", buffer[i]);
+    printf("%.2x", hash_buffer[i]);
   }
   printf("\n");
 
-  unsigned long hashed = 0;
+  // ------------------------------ SIGNING ------------------------------------
 
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    hashed = (abs)(hashed << 8) | buffer[i];
-  }
-
-  printf("\trunning ECDSA on hash:\t%ld\n", hashed);
+  printf("\trunning ECDSA on hash:\t%ld\n", (unsigned long)hash_buffer);
+  GetSignature((unsigned long)hash_buffer);
 
   transaction->amount = amount;
   payee->wallet->balance += amount;
@@ -187,9 +187,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   Transaction_print(transaction);
 
-  GetSignature(hashed);
-
-  free(text);
+  free(text_buffer);
 
   return transaction;
 }
@@ -434,15 +432,15 @@ void Transaction_print(struct Transaction *transaction) {
 
   unsigned int i = 0;
 
-  printf("\nTransaction:\n");
+  printf("\nTransaction verified:\n");
 
-  printf("\tpayee address:\t\t");
+  printf("\tpayee wallet address:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
   }
   printf("\n");
 
-  printf("\tamount:\t\t\t%lu\n", transaction->amount);
+  printf("\ttransaction amount:\t%lu\n", transaction->amount);
 
   printf("\tpayer public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
