@@ -20,16 +20,16 @@ int main() {
   printf("\n\t\t\t\t\t   Population 51,201\n");
   printf("\nSay hello to our users!\n");
 
-  users[0] = User_create("BOB");
+  users[0] = User_create((unsigned char *)"BOB");
   assert(users[0] != NULL);
 
-  users[1] = User_create("Windom Earle");
+  users[1] = User_create((unsigned char *)"Windom Earle");
   assert(users[1] != NULL);
 
-  users[2] = User_create("Laura Palmer");
+  users[2] = User_create((unsigned char *)"Laura Palmer");
   assert(users[2] != NULL);
 
-  users[3] = User_create("Dale Cooper");
+  users[3] = User_create((unsigned char *)"Dale Cooper");
   assert(users[3] != NULL);
 
   //------------------------------ TRANSACTIONS --------------------------------

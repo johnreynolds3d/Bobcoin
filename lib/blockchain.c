@@ -139,15 +139,15 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   int size_amount = snprintf(NULL, 0, "%lu", amount);
   assert(size_amount > 0);
 
-  unsigned char amount_buffer[size_amount + 1];
-  snprintf(amount_buffer, size_amount + 1, "%lu", amount);
+  char amount_buffer[size_amount + 1];
+  snprintf((char *)amount_buffer, size_amount + 1, "%lu", amount);
   printf("\ttransaction amount:\t%s\n", amount_buffer);
 
   int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
   assert(size_time > 0);
 
-  unsigned char time_buffer[size_time];
-  snprintf(time_buffer, size_time, "%lu", (unsigned long)time(NULL));
+  char time_buffer[size_time];
+  snprintf((char *)time_buffer, size_time, "%lu", (unsigned long)time(NULL));
   printf("\ttransaction time:\t%s\n", time_buffer);
 
   unsigned char *text_buffer =
