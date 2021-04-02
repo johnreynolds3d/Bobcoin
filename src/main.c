@@ -10,8 +10,6 @@ int main() {
 
   srand(time(NULL));
 
-  unsigned int i = 0;
-
   // -------------------------------- USERS -----------------------------------
 
   unsigned int num_users = 4;
@@ -95,6 +93,8 @@ int main() {
   // ------------------------------ CLEANUP ------------------------------------
 
   printf("\n");
+
+  unsigned int i = 0;
 
   for (i = 0; i < num_users; i++) {
     User_destroy(users[i]);

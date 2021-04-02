@@ -13,14 +13,14 @@ unsigned char *GetHash(unsigned char *buffer, unsigned char *text) {
 
   assert(buffer != NULL && text != NULL);
 
-  BYTE hash[SHA256_BLOCK_SIZE] = {
+  unsigned char hash[SHA256_BLOCK_SIZE] = {
       0xba, 0x78, 0x16, 0xbf, 0x8f, 0x01, 0xcf, 0xea, 0x41, 0x41, 0x40,
       0xde, 0x5d, 0xae, 0x22, 0x23, 0xb0, 0x03, 0x61, 0xa3, 0x96, 0x17,
       0x7a, 0x9c, 0xb4, 0x10, 0xff, 0x61, 0xf2, 0x00, 0x15, 0xad};
 
   SHA256_CTX ctx;
   sha256_init(&ctx);
-  sha256_update(&ctx, text, strlen(text));
+  sha256_update(&ctx, text, strlen((const char *)(text)));
   sha256_final(&ctx, buffer);
 
   if (!memcmp(hash, buffer, SHA256_BLOCK_SIZE)) {
@@ -38,7 +38,7 @@ struct User *User_create(unsigned char *name) {
   struct User *user = calloc(1, sizeof(struct User));
   assert(user != NULL);
 
-  user->name = calloc(strlen(name) + 1, sizeof(char));
+  user->name = calloc(strlen((const char *)(name)) + 1, sizeof(char));
   assert(user->name != NULL);
 
   user->public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
@@ -47,7 +47,7 @@ struct User *User_create(unsigned char *name) {
   user->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(user->private_key != NULL);
 
-  memcpy(user->name, name, strlen(name) + 1);
+  memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
@@ -59,13 +59,13 @@ struct User *User_create(unsigned char *name) {
 
   for (i = 3; i < SHA256_BLOCK_SIZE; i++) {
     user->public_key[i] =
-        alphanum[rand() % ((strlen(alphanum) - 1) - 0 + 1) + 0];
+        alphanum[rand() % ((strlen((const char *)(alphanum)) - 1) - 0 + 1) + 0];
   }
   user->public_key[SHA256_BLOCK_SIZE] = '\0';
 
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     user->private_key[i] =
-        alphanum[rand() % ((strlen(alphanum) - 1) - 0 + 1) + 0];
+        alphanum[rand() % ((strlen((const char *)(alphanum)) - 1) - 0 + 1) + 0];
   }
   user->private_key[SHA256_BLOCK_SIZE] = '\0';
 
@@ -155,13 +155,17 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   assert(text_buffer != NULL);
 
   memcpy(text_buffer, transaction->payee_address, SHA256_BLOCK_SIZE);
-  strcat(text_buffer, time_buffer);
-  strcat(text_buffer, amount_buffer);
+
+  strncat((char *)text_buffer, time_buffer,
+          sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
+
+  strncat((char *)text_buffer, amount_buffer,
+          sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
 
   unsigned int i = 0;
 
   printf("\ttransaction text:\t");
-  for (i = 0; i < strlen(text_buffer); i++) {
+  for (i = 0; i < strlen((const char *)(text_buffer)); i++) {
     printf("%.2x", text_buffer[i]);
   }
   printf("\n");
@@ -224,7 +228,7 @@ struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
 
   unsigned char *gmt = asctime(time_info);
 
-  block_header->time = calloc(strlen(gmt) + 1, sizeof(char));
+  block_header->time = calloc(strlen(const char *)(gmt) + 1, sizeof(char));
   assert(block_header->time != NULL);
 
   strcpy(block_header->time, gmt);
@@ -241,9 +245,9 @@ struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
 
   // ---------------------------- HASH_MERKLE_ROOT -----------------------------
 
-  block->transactions = calloc(strlen(transactions) + 1, sizeof(char));
-  assert(block->transactions != NULL);
-  strcpy(block->transactions, transactions);
+  block->transactions = calloc(strlen(const char *)(transactions) + 1,
+sizeof(char)); assert(block->transactions != NULL); strcpy(block->transactions,
+transactions);
 
   block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
   assert(block->hash != NULL);
@@ -251,10 +255,10 @@ struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
   BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
 
   unsigned char *text =
-      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
-  assert(text != NULL);
+      calloc(strlen(const char *)(transactions) + 1 + strlen(const char
+*)(nonce) + 1, sizeof(char)); assert(text != NULL);
 
-  memcpy(text, transactions, strlen(transactions) + 1);
+  memcpy(text, transactions, strlen(const char *)(transactions) + 1);
   strcat(text, nonce);
 
   printf("\ttext:\t\t%s", text);
@@ -292,10 +296,10 @@ struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
   BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
 
   char *text =
-      calloc(strlen(transactions) + 1 + strlen(nonce) + 1, sizeof(char));
-  assert(text != NULL);
+      calloc(strlen(const char *)(transactions) + 1 + strlen(const char
+*)(nonce) + 1, sizeof(char)); assert(text != NULL);
 
-  memcpy(text, transactions, strlen(transactions) + 1);
+  memcpy(text, transactions, strlen(const char *)(transactions) + 1);
   strcat(text, nonce);
 
   printf("\ttext:\t\t%s", text);
