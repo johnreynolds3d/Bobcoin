@@ -38,7 +38,7 @@ struct Block {
   struct Transaction *transactions;
 };
 
-void GetSignature(long f);
+void GetSignature(long f, unsigned long *signature_buffer);
 
 unsigned char *GetHash(unsigned char *buffer, unsigned char *text);
 

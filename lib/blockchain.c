@@ -125,7 +125,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   transaction->payer_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->payer_public_key != NULL);
 
-  transaction->payer_signature = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  transaction->payer_signature = calloc(65, sizeof(char));
   assert(transaction->payer_signature != NULL);
 
   memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
@@ -178,8 +178,13 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   // ------------------------------ SIGNING ------------------------------------
 
-  printf("\trunning ECDSA on hash:\t%ld\n", (unsigned long)hash_buffer);
-  GetSignature((unsigned long)hash_buffer);
+  printf("\trunning ECDSA on hash:\t%ld\n", (long)hash_buffer);
+  unsigned long *signature_buffer = calloc(2, sizeof(long));
+  assert(signature_buffer != 0);
+
+  GetSignature((long)hash_buffer, signature_buffer);
+  printf("\n\tsignature (c, d):\t(%ld, %ld)\n", signature_buffer[0],
+         signature_buffer[1]);
 
   transaction->amount = amount;
   payee->wallet->balance += amount;
@@ -188,6 +193,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   Transaction_print(transaction);
 
   free(text_buffer);
+  free(signature_buffer);
 
   return transaction;
 }

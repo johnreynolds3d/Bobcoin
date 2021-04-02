@@ -1,6 +1,8 @@
 #include "headers/ecdsa.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 // maximum modulus
@@ -294,7 +296,7 @@ int verify(epnt W, long f, pair sg) {
 }
 
 // digital signature on message hash f, error bit d
-void ec_dsa(long f, long d) {
+void ec_dsa(long f, long d, unsigned long *signature_buffer) {
 
   long i;
   long s;
@@ -336,7 +338,7 @@ void ec_dsa(long f, long d) {
     f >>= 1;
   }
 
-  printf("\n\taligned hash: %ld\n", f);
+  printf("\taligned hash: %ld\n", f);
 
   sg = signature(s, f);
 
@@ -363,6 +365,8 @@ void ec_dsa(long f, long d) {
 
   if (t) {
     printf("\n\tVALID\n\t_____\n");
+    signature_buffer[0] = sg.a;
+    signature_buffer[1] = sg.b;
   }
 
   else {
@@ -376,7 +380,9 @@ errmsg:
   printf("\t_____________________\n");
 }
 
-void GetSignature(long f) {
+void GetSignature(long hash, unsigned long *signature_buffer) {
+
+  assert(signature_buffer != NULL);
 
   typedef long eparm[6];
 
@@ -392,14 +398,16 @@ void GetSignature(long f) {
    */
   eparm *sp;
 
-  eparm sets[5] = {
+  eparm sets[1] = {
 
       // a, b, modulus N, base point G, order(G, E), cofactor
       {355, 671, 1073741789, 13693, 10088, 1073807281},
+      /*
       {0, 7, 67096021, 6580, 779, 16769911}, // 4
       {-3, 1, 877073, 0, 1, 878159},
       {0, 14, 22651, 63, 30, 151}, // 151
       {3, 2, 5, 2, 1, 5},
+      */
 
       /*
       // ecdsa may fail if:
@@ -422,7 +430,7 @@ void GetSignature(long f) {
 
   for (sp = sets;; sp++) {
     if (ellinit(*sp)) {
-      ec_dsa(f, d);
+      ec_dsa(hash, d, signature_buffer);
     } else {
       break;
     }

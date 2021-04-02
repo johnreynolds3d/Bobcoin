@@ -47,8 +47,8 @@ pair signature(dlong s, long f);
 
 int verify(epnt W, long f, pair sg);
 
-void ec_dsa(long f, long d);
+void ec_dsa(long f, long d, unsigned long *signature_buffer);
 
-void GetSignature(long f);
+void GetSignature(long f, unsigned long *signature_buffer);
 
 #endif

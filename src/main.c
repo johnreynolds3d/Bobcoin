@@ -23,30 +23,41 @@ int main() {
   printf("\nSay hello to our users!\n");
 
   users[0] = User_create("BOB");
-  users[1] = User_create("Windom Earle");
-  users[2] = User_create("Laura Palmer");
-  users[3] = User_create("Dale Cooper");
+  assert(users[0] != NULL);
 
-  printf(
-      "\nTransaction 0: BOB (AKA... SATOSHI NAKAMOTO!) creates the first 100 "
-      "coins...\n");
+  users[1] = User_create("Windom Earle");
+  assert(users[1] != NULL);
+
+  users[2] = User_create("Laura Palmer");
+  assert(users[2] != NULL);
+
+  users[3] = User_create("Dale Cooper");
+  assert(users[3] != NULL);
+
+  //------------------------------ TRANSACTIONS --------------------------------
+
+  unsigned int num_transactions = 3;
+
+  struct Transaction *transactions[num_transactions];
+
+  printf("\nTransaction 0 (Genesis): BOB (AKA... SATOSHI NAKAMOTO!) creates "
+         "the first 100 "
+         "coins...\n");
 
   users[0]->wallet->balance = 100;
+
+  transactions[0] = Transaction_create(users[0], users[0], 100);
+  assert(transactions[0] != NULL);
 
   printf("\nPayer:");
   User_print(users[0]);
   printf("\nPayee:");
   User_print(users[0]);
 
-  //------------------------------ TRANSACTIONS --------------------------------
-
-  unsigned int num_transactions = 2;
-
-  struct Transaction *transactions[num_transactions];
-
   printf("\nTransaction 1: BOB sends Windom Earle 25 coins...\n");
 
-  transactions[0] = Transaction_create(users[0], users[1], 25);
+  transactions[1] = Transaction_create(users[0], users[1], 25);
+  assert(transactions[1] != NULL);
 
   printf("\nPayer:");
   User_print(users[0]);
@@ -55,7 +66,8 @@ int main() {
 
   printf("\nTransaction 2: BOB sends Laura 10 coins...\n");
 
-  transactions[1] = Transaction_create(users[0], users[2], 10);
+  transactions[2] = Transaction_create(users[0], users[2], 10);
+  assert(transactions[2] != NULL);
 
   printf("\nPayer:");
   User_print(users[0]);
@@ -63,56 +75,24 @@ int main() {
   User_print(users[2]);
 
   /*
-
   //-------------------------------- BLOCKS ------------------------------------
 
   unsigned int num_blocks = 2;
 
   struct Block *blockchain[num_blocks];
 
-  unsigned int bits = rand() % (4 + 1 - 0) + 0;
+  unsigned long bits = rand() % (4 + 1 - 0) + 0;
 
-  blockchain[0] = Block_create(genesis, bits, transactions);
-
-  if (blockchain[0] == NULL) {
-    free(genesis);
-    exit(1);
-  }
-
-  free(signature);
+  blockchain[0] = Block_create("", bits, transactions);
+  assert(blockchain[0] != NULL);
 
   bits = rand() % (4 + 1 - 0) + 0;
-
-  transactions = "David sent Bob 12 bitcoin, Windom sent Bob 5 "
-                 "bitcoin, Audrey sent Donna 6 bitcoin";
 
   blockchain[1] = Block_create(bits, blockchain[0]->hash, transactions);
-
-  if (blockchain[1] == NULL) {
-    Block_destroy(blockchain[0]);
-    exit(1);
-  }
-
-  bits = rand() % (4 + 1 - 0) + 0;
-
-  transactions = "Shelly sent Bobby 2 bitcoin";
-
-  blockchain[2] = Block_create(bits, blockchain[1]->hash, transactions);
-
-  if (blockchain[2] == NULL) {
-    Block_destroy(blockchain[0]);
-    Block_destroy(blockchain[1]);
-    exit(1);
-  }
-
-  bits = rand() % (4 + 1 - 0) + 0;
-
-  transactions = "Bob sent Laura 10 bitcoin, Dale sent Harry 7 bitcoin";
-
-  blockchain[3] = Block_create(bits, blockchain[2]->hash, transactions);
+  assert(transactions[1] != NULL);
   */
 
-  // --------------------------------- CLEANUP ---------------------------------
+  // ------------------------------ CLEANUP ------------------------------------
 
   printf("\n");
 
@@ -128,13 +108,6 @@ int main() {
   }
 
   /*
-  if (blockchain[3] == NULL) {
-    Block_destroy(blockchain[0]);
-    Block_destroy(blockchain[1]);
-    Block_destroy(blockchain[2]);
-    exit(1);
-  }
-
   for (int i = 0; i < num_blocks; i++) {
     Block_destroy(blockchain[i]);
   }
