@@ -148,7 +148,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   char time_buffer[size_time];
   snprintf((char *)time_buffer, size_time, "%lu", (unsigned long)time(NULL));
-  printf("\ttransaction time:\t%s\n", time_buffer);
+  printf("\ttransaction time:\t%s (seconds since UNIX epoch)\n", time_buffer);
 
   unsigned char *text_buffer =
       calloc(SHA256_BLOCK_SIZE + size_time + size_amount, sizeof(char));
