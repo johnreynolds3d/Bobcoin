@@ -148,7 +148,8 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   char time_buffer[size_time];
   snprintf((char *)time_buffer, size_time, "%lu", (unsigned long)time(NULL));
-  printf("\ttransaction time:\t%s (seconds since UNIX epoch)\n", time_buffer);
+  printf("\ttransaction time:\t%s (seconds since 1970-01-01T00:00:00Z)\n",
+         time_buffer);
 
   unsigned char *text_buffer =
       calloc(SHA256_BLOCK_SIZE + size_time + size_amount, sizeof(char));
@@ -279,10 +280,18 @@ struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
                            struct Transaction **transactions) {
 
   assert(hash_prev_block != NULL && transactions != NULL);
+*/
+
+struct Block *Block_create(unsigned long bits) {
 
   struct Block *block = calloc(1, sizeof(struct Block));
   assert(block != NULL);
 
+  *(unsigned long *)&block->magic_number = 0xD9B4BEF9UL;
+
+  block->bits = bits;
+
+  /*
   block->block_header = BlockHeader_create(hash_prev_block, bits);
   assert(block->block_header != NULL);
 
@@ -367,8 +376,9 @@ struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
       }
     }
   }
-}
 */
+  return block;
+}
 
 void User_print(struct User *user) {
 

@@ -72,18 +72,31 @@ int main() {
   printf("\nPayee:");
   User_print(users[2]);
 
-  /*
   //-------------------------------- BLOCKS ------------------------------------
 
   unsigned int num_blocks = 2;
 
   struct Block *blockchain[num_blocks];
 
-  unsigned long bits = rand() % (4 + 1 - 0) + 0;
+  unsigned long bits = rand() % (4294967295 + 1 - 0) + 0;
 
-  blockchain[0] = Block_create("", bits, transactions);
+  blockchain[0] = Block_create(bits);
   assert(blockchain[0] != NULL);
 
+  bits = rand() % (4294967295 + 1 - 0) + 0;
+
+  blockchain[1] = Block_create(bits);
+  assert(blockchain[1] != NULL);
+
+  unsigned int i = 0;
+
+  for (i = 0; i < num_blocks; i++) {
+    printf("\nblockchain[%d]->magic_number:\t%ld\n", i,
+           blockchain[i]->magic_number);
+    printf("blockchain[%d]->bits:\t\t%ld\n", i, blockchain[i]->bits);
+  }
+
+  /*
   bits = rand() % (4 + 1 - 0) + 0;
 
   blockchain[1] = Block_create(bits, blockchain[0]->hash, transactions);
@@ -93,8 +106,6 @@ int main() {
   // ------------------------------ CLEANUP ------------------------------------
 
   printf("\n");
-
-  unsigned int i = 0;
 
   for (i = 0; i < num_users; i++) {
     User_destroy(users[i]);
@@ -107,11 +118,10 @@ int main() {
     free(transactions[i]);
   }
 
-  /*
   for (int i = 0; i < num_blocks; i++) {
-    Block_destroy(blockchain[i]);
+    // Block_destroy(blockchain[i]);
+    free(blockchain[i]);
   }
-  */
 
   return 0;
 }
