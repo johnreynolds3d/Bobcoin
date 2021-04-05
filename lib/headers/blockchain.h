@@ -27,17 +27,17 @@ struct BlockHeader {
   unsigned char *version;
   unsigned char *hash_prev_block;
   unsigned char *hash_merkle_root;
-  unsigned char *time;
-  // unsigned long bits;
+  unsigned long time;
+  unsigned long bits;
   unsigned long nonce;
 };
 
 struct Block {
   const unsigned long magic_number;
-  unsigned long bits;
-  struct BlockHeader *blockheader;
+  unsigned long block_size;
   unsigned long transaction_counter;
-  struct Transaction *transactions;
+  struct BlockHeader *block_header;
+  struct Transaction **transactions;
 };
 
 void GetSignature(long f, unsigned long *signature_buffer);
@@ -54,12 +54,8 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                        unsigned long bits);
 
-/*
-struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
-                           struct Transaction **transactions);
-                           */
-
-struct Block *Block_create(unsigned long bits);
+struct Block *Block_create(struct Transaction **transactions,
+                           unsigned long transaction_counter);
 
 void User_print(struct User *user);
 

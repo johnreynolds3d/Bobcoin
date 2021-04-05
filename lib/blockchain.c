@@ -41,7 +41,7 @@ struct User *User_create(unsigned char *name) {
   user->name = calloc(strlen((const char *)(name)) + 1, sizeof(char));
   assert(user->name != NULL);
 
-  user->public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  user->public_key = calloc((SHA256_BLOCK_SIZE * 2) + 1, sizeof(char));
   assert(user->public_key != NULL);
 
   user->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
@@ -49,29 +49,26 @@ struct User *User_create(unsigned char *name) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
+  unsigned int i = 0;
+
+  const char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
   user->public_key[2] = '1';
 
-  unsigned char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
-  unsigned int i = 0;
-
-  for (i = 3; i < SHA256_BLOCK_SIZE; i++) {
+  for (i = 3; i < SHA256_BLOCK_SIZE * 2; i++) {
     user->public_key[i] =
-        alphanum[rand() % ((strlen((const char *)(alphanum)) - 1) - 0 + 1) + 0];
+        alphanum[rand() % ((strlen((const char *)alphanum) - 1) - 0 + 1) + 0];
   }
-  user->public_key[SHA256_BLOCK_SIZE] = '\0';
+  user->public_key[SHA256_BLOCK_SIZE * 2] = '\0';
 
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    user->private_key[i] =
-        alphanum[rand() % ((strlen((const char *)(alphanum)) - 1) - 0 + 1) + 0];
+    user->private_key[i] = rand() % (255 - 0 + 1) + 0;
   }
   user->private_key[SHA256_BLOCK_SIZE] = '\0';
 
   user->wallet = Wallet_create(user);
-
-  User_print(user);
 
   return user;
 }
@@ -136,17 +133,17 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   // ------------------------------ HASHING ------------------------------------
 
   // concatenate address, amount, and time into a string for hashing
-  int size_amount = snprintf(NULL, 0, "%lu", amount);
+  unsigned int size_amount = snprintf(NULL, 0, "%lu", amount);
   assert(size_amount > 0);
 
-  char amount_buffer[size_amount + 1];
+  unsigned char amount_buffer[size_amount + 1];
   snprintf((char *)amount_buffer, size_amount + 1, "%lu", amount);
   printf("\ttransaction amount:\t%s\n", amount_buffer);
 
-  int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
+  unsigned int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
   assert(size_time > 0);
 
-  char time_buffer[size_time];
+  unsigned char time_buffer[size_time];
   snprintf((char *)time_buffer, size_time, "%lu", (unsigned long)time(NULL));
   printf("\ttransaction time:\t%s (seconds since 1970-01-01T00:00:00Z)\n",
          time_buffer);
@@ -195,8 +192,6 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   payee->wallet->balance += amount;
   payer->wallet->balance -= amount;
 
-  Transaction_print(transaction);
-
   free(text_buffer);
   free(signature_buffer);
 
@@ -207,7 +202,6 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                        unsigned long bits) {
 
-  assert(hash_prev_block != NULL);
 
   struct BlockHeader *block_header = calloc(1, sizeof(struct BlockHeader));
   assert(block_header != NULL);
@@ -282,22 +276,34 @@ struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
   assert(hash_prev_block != NULL && transactions != NULL);
 */
 
-struct Block *Block_create(unsigned long bits) {
+struct Block *Block_create(struct Transaction **transactions,
+                           unsigned long transaction_counter) {
+
+  assert(transactions != NULL);
 
   struct Block *block = calloc(1, sizeof(struct Block));
   assert(block != NULL);
 
   *(unsigned long *)&block->magic_number = 0xD9B4BEF9UL;
 
-  block->bits = bits;
+  block->transaction_counter = transaction_counter;
+
+  block->transactions = calloc(transaction_counter, sizeof(struct Transaction));
+  assert(block->transactions != NULL);
+
+  unsigned int i = 0;
+
+  for (i = 0; i < transaction_counter; i++) {
+    // memcpy(block->transactions, transactions, sizeof(struct Transaction));
+    block->transactions[i] = transactions[i];
+  }
+
+  // unsigned long bits = rand() % (((int)pow(2, 32) - 1) - 0 + 1) + 0;
 
   /*
   block->block_header = BlockHeader_create(hash_prev_block, bits);
   assert(block->block_header != NULL);
 
-  block->transactions = calloc(1, sizeof(struct Transaction));
-  assert(block->transactions != NULL);
-  memcpy(block->transactions, transactions, sizeof(char));
 
   block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
   assert(block->hash != NULL);
@@ -377,6 +383,7 @@ struct Block *Block_create(unsigned long bits) {
     }
   }
 */
+
   return block;
 }
 
@@ -388,19 +395,20 @@ void User_print(struct User *user) {
 
   unsigned int i = 0;
 
-  printf("\tuser public key:\t");
+  printf("\tuser public key:\t%s\n", user->public_key);
+
+  /*
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->public_key[i]);
   }
   printf("\n");
+  */
 
   printf("\tuser private key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->private_key[i]);
   }
   printf("\n");
-
-  Wallet_print(user);
 }
 
 void Wallet_print(struct User *user) {
@@ -462,13 +470,15 @@ void Transaction_print(struct Transaction *transaction) {
 
   printf("\ttransaction amount:\t%lu\n", transaction->amount);
 
+  printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
+
+  /*
   printf("\tpayer public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payer_public_key[i]);
   }
   printf("\n");
 
-  /*
   printf("\tpayer signature:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payer_signature[i]);
@@ -477,11 +487,20 @@ void Transaction_print(struct Transaction *transaction) {
   */
 }
 
-/*
 void Block_print(struct Block *block) {
 
   assert(block != NULL);
 
+  printf("\nBlock:\n");
+  printf("\ttransaction counter:\t%ld\n", block->transaction_counter);
+
+  unsigned int i = 0;
+
+  for (i = 0; i < block->transaction_counter; i++) {
+    Transaction_print(block->transactions[i]);
+  }
+
+  /*
   printf("\ttime:\t%s", block->block_header->time);
 
   unsigned int i = 0;
@@ -509,8 +528,8 @@ void Block_print(struct Block *block) {
     }
   }
   printf("\n");
-}
 */
+}
 
 /*
 void Block_destroy(struct Block *block) {
