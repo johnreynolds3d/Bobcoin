@@ -119,16 +119,18 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   transaction->payee_address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(transaction->payee_address != NULL);
 
-  transaction->payer_public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  transaction->payer_public_key =
+      calloc((SHA256_BLOCK_SIZE * 2) + 1, sizeof(char));
   assert(transaction->payer_public_key != NULL);
 
   transaction->payer_signature = calloc(65, sizeof(char));
   assert(transaction->payer_signature != NULL);
 
   memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
-  memcpy(transaction->payer_public_key, payer->public_key, SHA256_BLOCK_SIZE);
+  memcpy(transaction->payer_public_key, payer->public_key,
+         SHA256_BLOCK_SIZE * 2);
 
-  printf("\nTransaction pending:\n");
+  printf("\nTransaction pending:\n\n");
 
   // ------------------------------ HASHING ------------------------------------
 
@@ -162,11 +164,13 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   unsigned int i = 0;
 
+  /*
   printf("\ttransaction text:\t");
   for (i = 0; i < strlen((const char *)(text_buffer)); i++) {
     printf("%.2x", text_buffer[i]);
   }
   printf("\n");
+  */
 
   unsigned char hash_buffer[SHA256_BLOCK_SIZE] = {'0'};
 
@@ -180,17 +184,34 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   // ------------------------------ SIGNING ------------------------------------
 
-  printf("\trunning ECDSA on hash:\t%ld\n", (long)hash_buffer);
+  // printf("\trunning ECDSA on hash:\t%ld\n", (long)hash_buffer);
+
   unsigned long *signature_buffer = calloc(2, sizeof(long));
   assert(signature_buffer != 0);
 
   GetSignature((long)hash_buffer, signature_buffer);
+
+  /*
   printf("\n\tsignature (c, d):\t(%ld, %ld)\n", signature_buffer[0],
          signature_buffer[1]);
+         */
 
   transaction->amount = amount;
+
   payee->wallet->balance += amount;
   payer->wallet->balance -= amount;
+
+  if (payee->wallet->transactions == NULL) {
+    payee->wallet->transactions[0] = transaction;
+  } else {
+    payee->wallet->transactions[1] = transaction;
+  }
+
+  for (i = 0; i < 2 && payee->wallet->transactions[i] != NULL; i++) {
+    printf("\nsizeof(payee->wallet->transactions[%d]): %ld\n", i,
+           sizeof(payee->wallet->transactions[i]));
+    Transaction_print(payee->wallet->transactions[i]);
+  }
 
   free(text_buffer);
   free(signature_buffer);
@@ -288,13 +309,12 @@ struct Block *Block_create(struct Transaction **transactions,
 
   block->transaction_counter = transaction_counter;
 
-  block->transactions = calloc(transaction_counter, sizeof(struct Transaction));
+  block->transactions = calloc(1, sizeof(struct Transaction));
   assert(block->transactions != NULL);
 
   unsigned int i = 0;
 
   for (i = 0; i < transaction_counter; i++) {
-    // memcpy(block->transactions, transactions, sizeof(struct Transaction));
     block->transactions[i] = transactions[i];
   }
 
@@ -397,18 +417,13 @@ void User_print(struct User *user) {
 
   printf("\tuser public key:\t%s\n", user->public_key);
 
-  /*
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", user->public_key[i]);
-  }
-  printf("\n");
-  */
-
   printf("\tuser private key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->private_key[i]);
   }
   printf("\n");
+
+  Wallet_print(user);
 }
 
 void Wallet_print(struct User *user) {

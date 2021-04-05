@@ -46,7 +46,7 @@ long exgcd(long v, long u) {
   }
 
   if (u != 1) {
-    printf("\timpossible inverse mod N, gcd = %ld\n", u);
+    printf("\t\timpossible inverse mod N, gcd = %ld\n", u);
     inverr = 1;
   }
 
@@ -200,11 +200,11 @@ int ellinit(long i[]) {
   if (e.r < 5 || e.r > mxr) {
     return 0;
   }
-  printf("\nInitialize elliptic curve:\n");
-  printf("\tE: y^2 = x^3 + %ldx + %ld", a, b);
+  printf("\n\n\tInitialize elliptic curve:\n");
+  printf("\t\tE: y^2 = x^3 + %ldx + %ld", a, b);
   printf(" (mod %lld)\n", e.N);
-  pprint("\tbase point G", e.G);
-  printf("\torder(G, E) = %lld\n", e.r);
+  pprint("\t\tbase point G", e.G);
+  printf("\t\torder(G, E) = %lld\n", e.r);
 
   return 1;
 }
@@ -223,7 +223,7 @@ pair signature(dlong s, long f) {
   pair sg;
   epnt V;
 
-  printf("\nSignature computation:\n");
+  printf("\n\tSignature computation:\n");
 
   do {
     do {
@@ -237,8 +237,8 @@ pair signature(dlong s, long f) {
 
   } while (d == 0);
 
-  printf("\tone-time u = %ld\n", u);
-  pprint("\tV = uG", V);
+  printf("\t\tone-time u = %ld\n", u);
+  pprint("\t\tV = uG", V);
 
   sg.a = c;
   sg.b = d;
@@ -267,22 +267,22 @@ int verify(epnt W, long f, pair sg) {
     return 0;
   }
 
-  printf("\nSignature verification:\n");
+  printf("\n\tSignature verification:\n");
 
   h = exgcd(d, e.r);
   h1 = modr(f * h);
   h2 = modr(c * h);
 
-  printf("\th1, h2 = %ld, %ld\n", h1, h2);
+  printf("\t\th1, h2 = %ld, %ld\n", h1, h2);
 
   pmul(&V, e.G, h1);
   pmul(&V2, W, h2);
 
-  pprint("\th1G", V);
-  pprint("\th2W", V2);
+  pprint("\t\th1G", V);
+  pprint("\t\th2W", V2);
 
   padd(&V, V, V2);
-  pprint("\t+ =", V);
+  pprint("\t\t+ =", V);
 
   if (isO(V)) {
     return 0;
@@ -290,7 +290,7 @@ int verify(epnt W, long f, pair sg) {
 
   c1 = modr(V.x);
 
-  printf("\tc' = %ld\n", c1);
+  printf("\t\tc' = %ld\n", c1);
 
   return (c1 == c);
 }
@@ -318,14 +318,14 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
     goto errmsg;
   }
 
-  printf("\nKey generation:\n");
+  printf("\n\tKey generation:\n");
 
   s = 1 + (long)(rnd() * (e.r - 1));
 
   pmul(&W, e.G, s);
 
-  printf("\tprivate key s = %ld\n", s);
-  pprint("\tpublic key W = sG", W);
+  printf("\t\tprivate key s = %ld\n", s);
+  pprint("\t\tpublic key W = sG", W);
 
   // next highest power of 2 - 1
   t = e.r;
@@ -338,7 +338,7 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
     f >>= 1;
   }
 
-  printf("\taligned hash: %ld\n", f);
+  printf("\t\taligned hash: %ld\n", f);
 
   sg = signature(s, f);
 
@@ -346,7 +346,7 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
     goto errmsg;
   }
 
-  printf("\tsignature c, d = %ld, %ld\n", sg.a, sg.b);
+  printf("\t\tsignature c, d = %ld, %ld\n", sg.a, sg.b);
 
   if (d > 0) {
     while (d > t) {
@@ -354,7 +354,7 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
     }
     f ^= d;
 
-    printf("\nCorrupted hash: %ld\n", f);
+    printf("\n\tCorrupted hash: %ld\n", f);
   }
 
   t = verify(W, f, sg);
@@ -364,20 +364,25 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
   }
 
   if (t) {
-    printf("\n\tVALID\n\t_____\n");
+    printf("\n\n\t\t\t\t\t\t___________\n\n\t\t\t\t\t\t   "
+           "VALID\n\t\t\t\t\t\t_______"
+           "____\n\n");
     signature_buffer[0] = sg.a;
     signature_buffer[1] = sg.b;
   }
 
   else {
-    printf("\n\tINVALID\n\t_______\n");
+    printf("\n\n\t\t\t\t\t\t___________\n\n\t\t\t\t\t\t   "
+           "INVALID\n\t\t\t\t\t\t_____"
+           "______\n\n");
   }
 
   return;
 
 errmsg:
-  printf("\n\tInvalid parameter set\n");
-  printf("\t_____________________\n");
+  printf("\n\n\t\t\t\t\t _________________________");
+  printf("\n\n\t\t\t\t\t   INVALID PARAMETER SET");
+  printf("\n\t\t\t\t\t _________________________\n\n");
 }
 
 void GetSignature(long hash, unsigned long *signature_buffer) {
@@ -401,15 +406,13 @@ void GetSignature(long hash, unsigned long *signature_buffer) {
   eparm sets[1] = {
 
       // a, b, modulus N, base point G, order(G, E), cofactor
-      {355, 671, 1073741789, 13693, 10088, 1073807281},
+      {355, 671, 1073741789, 13693, 10088, 1073807281}
       /*
       {0, 7, 67096021, 6580, 779, 16769911}, // 4
       {-3, 1, 877073, 0, 1, 878159},
       {0, 14, 22651, 63, 30, 151}, // 151
       {3, 2, 5, 2, 1, 5},
-      */
 
-      /*
       // ecdsa may fail if:
       //   the base point is of composite order
       {0, 7, 67096021, 2402, 6067, 33539822}, // 2
@@ -418,7 +421,7 @@ void GetSignature(long hash, unsigned long *signature_buffer) {
       //   the modulus is not prime (deceptive example)
       {0, 7, 877069, 3, 97123, 877069},
       //   fails if the modulus divides the discriminant
-      {39, 387, 22651, 95, 27, 22651},
+      {39, 387, 22651, 95, 27, 22651}
       */
   };
 

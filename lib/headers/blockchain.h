@@ -12,8 +12,8 @@ struct Wallet {
   unsigned char *address;
   unsigned char *public_key;
   unsigned char *private_key;
-  struct Transaction *transactions;
   unsigned long balance;
+  struct Transaction **transactions;
 };
 
 struct Transaction {
