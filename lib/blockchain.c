@@ -156,10 +156,10 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   memcpy(text_buffer, transaction->payee_address, SHA256_BLOCK_SIZE);
 
-  strncat((char *)text_buffer, time_buffer,
+  strncat((char *)text_buffer, (const char *)time_buffer,
           sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
 
-  strncat((char *)text_buffer, amount_buffer,
+  strncat((char *)text_buffer, (const char *)amount_buffer,
           sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
 
   unsigned int i = 0;
