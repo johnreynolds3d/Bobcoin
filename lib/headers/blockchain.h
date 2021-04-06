@@ -37,7 +37,7 @@ struct Block {
   unsigned long block_size;
   unsigned long transaction_counter;
   struct BlockHeader *block_header;
-  struct Transaction *transactions[4];
+  struct Transaction *transactions[5];
 };
 
 void GetSignature(long f, unsigned long *signature_buffer);

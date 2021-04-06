@@ -88,11 +88,6 @@ struct Wallet *Wallet_create(struct User *user) {
   wallet->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(wallet->private_key != NULL);
 
-  /*
-  wallet->transactions = calloc(2, sizeof(struct Transaction));
-  assert(wallet->transactions != NULL);
-  */
-
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
 
   GetHash(buffer, user->public_key);
@@ -202,16 +197,10 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
   payee->wallet->balance += amount;
   payer->wallet->balance -= amount;
 
-  if (payee->wallet->transactions == NULL) {
+  if (payee->wallet->transactions[0] == NULL) {
     payee->wallet->transactions[0] = transaction;
   } else {
     payee->wallet->transactions[1] = transaction;
-  }
-
-  for (i = 0; i < 2 && payee->wallet->transactions[i] != NULL; i++) {
-    printf("\nsizeof(payee->wallet->transactions[%d]): %ld\n", i,
-           sizeof(payee->wallet->transactions[i]));
-    Transaction_print(payee->wallet->transactions[i]);
   }
 
   free(text_buffer);
