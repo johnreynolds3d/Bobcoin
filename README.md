@@ -1,4 +1,4 @@
-## A slightly *Lynchian* Implementation of a Blockchain in C
+## A slightly *Lynchian* implementation of a blockchain in C
 
 There's something *decentralized* happening in the sleepy town of Twin Peaks...
 
