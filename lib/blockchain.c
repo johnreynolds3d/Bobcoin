@@ -180,8 +180,6 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   // ------------------------------ SIGNING ------------------------------------
 
-  // printf("\trunning ECDSA on hash:\t%ld\n", (long)hash_buffer);
-
   unsigned long *signature_buffer = calloc(2, sizeof(long));
   assert(signature_buffer != 0);
 
@@ -201,6 +199,12 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
     payee->wallet->transactions[0] = transaction;
   } else {
     payee->wallet->transactions[1] = transaction;
+  }
+
+  if (payer->wallet->transactions[0] == NULL) {
+    payer->wallet->transactions[0] = transaction;
+  } else {
+    payer->wallet->transactions[1] = transaction;
   }
 
   free(text_buffer);
@@ -280,13 +284,6 @@ transactions);
 }
 */
 
-/*
-struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
-                           struct Transaction **transactions) {
-
-  assert(hash_prev_block != NULL && transactions != NULL);
-*/
-
 struct Block *Block_create(struct Transaction *transactions[],
                            unsigned long transaction_counter) {
 
@@ -299,23 +296,17 @@ struct Block *Block_create(struct Transaction *transactions[],
 
   block->transaction_counter = transaction_counter;
 
-  /*
-  block->transactions = calloc(1, sizeof(struct Transaction));
-  assert(block->transactions != NULL);
-  */
-
   unsigned int i = 0;
 
   for (i = 0; i < transaction_counter; i++) {
     block->transactions[i] = transactions[i];
   }
 
+  /*
   // unsigned long bits = rand() % (((int)pow(2, 32) - 1) - 0 + 1) + 0;
 
-  /*
   block->block_header = BlockHeader_create(hash_prev_block, bits);
   assert(block->block_header != NULL);
-
 
   block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
   assert(block->hash != NULL);
@@ -442,7 +433,16 @@ void Wallet_print(struct User *user) {
   }
   printf("\n");
 
-  printf("\twallet balance:\t\t%lu BOB\n", user->wallet->balance);
+  if (user->wallet->transactions[0] == NULL) {
+    printf("\n     wallet transactions:\tN/A\n");
+  } else {
+    printf("\n     wallet transactions:\n");
+    for (i = 0; user->wallet->transactions[i] != NULL; i++)
+      Transaction_print(user->wallet->transactions[i]);
+  }
+  printf("\n");
+
+  printf("     wallet balance:\t\t%lu BOB\n\n", user->wallet->balance);
 }
 
 void User_destroy(struct User *user) {
@@ -466,9 +466,9 @@ void Transaction_print(struct Transaction *transaction) {
 
   unsigned int i = 0;
 
-  printf("\nTransaction verified:\n");
+  // printf("\nTransaction verified:\n");
 
-  printf("\tpayee wallet address:\t");
+  printf("\n\tpayee wallet address:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
   }
@@ -497,8 +497,9 @@ void Block_print(struct Block *block) {
 
   assert(block != NULL);
 
-  printf("\nBlock:\n");
+  printf("\nBlock:\n\n");
   printf("\ttransaction counter:\t%ld\n", block->transaction_counter);
+  printf("\n     block transactions:\n");
 
   unsigned int i = 0;
 

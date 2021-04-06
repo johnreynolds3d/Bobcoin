@@ -8,9 +8,9 @@ int main() {
 
   srand(time(NULL));
 
-  printf("\n\n\n\n\n\t\t   ------------------  WELCOME TO TWIN PEAKS  "
+  printf("\n\n\n\n\t\t  ------------------  WELCOME TO TWIN PEAKS  "
          "------------------\n");
-  printf("\n\t\t\t\t         Population 51,201\n\n\n");
+  printf("\n\t\t\t\t        Population 51,201\n\n\n");
   printf("\nHi there! Say hello to our friendly local users...\n\n");
 
   struct User *users[4];
@@ -36,6 +36,7 @@ int main() {
   unsigned int i = 0;
 
   for (i = 0; i < user_counter; i++) {
+    printf("\nUser %d:", i);
     User_print(users[i]);
   }
 
@@ -52,8 +53,9 @@ int main() {
   printf("\nPayee:");
   User_print(users[0]);
 
-  printf("\n\n\n\t\t\t      --------  BLOCK %ld CREATION  --------\n\n",
-         block_counter);
+  printf("\n\n\t\t\t      -------------------------------------\n");
+  printf("\t\t\t                    BLOCK %ld\n", block_counter);
+  printf("\t\t\t      -------------------------------------\n");
   blockchain[0] = Block_create(&transactions[0], transaction_counter);
   Block_print(blockchain[block_counter]);
   block_counter++;
@@ -100,8 +102,9 @@ int main() {
   printf("\nPayee:");
   User_print(users[3]);
 
-  printf("\n\n\n\t\t\t      --------  BLOCK %ld CREATION  --------\n\n",
-         block_counter);
+  printf("\n\n\t\t\t      -------------------------------------\n");
+  printf("\t\t\t                    BLOCK %ld\n", block_counter);
+  printf("\t\t\t      -------------------------------------\n");
   blockchain[1] = Block_create(
       &transactions[blockchain[block_counter - 1]->transaction_counter],
       transaction_counter - blockchain[block_counter - 1]->transaction_counter);
