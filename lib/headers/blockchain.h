@@ -13,7 +13,7 @@ struct Wallet {
   unsigned char *public_key;
   unsigned char *private_key;
   unsigned long balance;
-  struct Transaction **transactions;
+  struct Transaction *transactions[2];
 };
 
 struct Transaction {
@@ -37,7 +37,7 @@ struct Block {
   unsigned long block_size;
   unsigned long transaction_counter;
   struct BlockHeader *block_header;
-  struct Transaction **transactions;
+  struct Transaction *transactions[4];
 };
 
 void GetSignature(long f, unsigned long *signature_buffer);
@@ -54,7 +54,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                        unsigned long bits);
 
-struct Block *Block_create(struct Transaction **transactions,
+struct Block *Block_create(struct Transaction *transactions[],
                            unsigned long transaction_counter);
 
 void User_print(struct User *user);

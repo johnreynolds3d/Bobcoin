@@ -364,25 +364,25 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
   }
 
   if (t) {
-    printf("\n\n\t\t\t\t\t\t___________\n\n\t\t\t\t\t\t   "
-           "VALID\n\t\t\t\t\t\t_______"
+    printf("\n\n\t\t\t\t\t  ___________\n\n\t\t\t\t\t     "
+           "VALID\n\t\t\t\t\t  _______"
            "____\n\n");
     signature_buffer[0] = sg.a;
     signature_buffer[1] = sg.b;
   }
 
   else {
-    printf("\n\n\t\t\t\t\t\t___________\n\n\t\t\t\t\t\t   "
-           "INVALID\n\t\t\t\t\t\t_____"
+    printf("\n\n\t\t\t\t\t  ___________\n\n\t\t\t\t\t     "
+           "INVALID\n\t\t\t\t\t  _____"
            "______\n\n");
   }
 
   return;
 
 errmsg:
-  printf("\n\n\t\t\t\t\t _________________________");
-  printf("\n\n\t\t\t\t\t   INVALID PARAMETER SET");
-  printf("\n\t\t\t\t\t _________________________\n\n");
+  printf("\n\n\t\t\t\t  ___________________________");
+  printf("\n\n\t\t\t\t     INVALID PARAMETER SET");
+  printf("\n\t\t\t\t  ___________________________\n\n");
 }
 
 void GetSignature(long hash, unsigned long *signature_buffer) {
@@ -421,7 +421,7 @@ void GetSignature(long hash, unsigned long *signature_buffer) {
       //   the modulus is not prime (deceptive example)
       {0, 7, 877069, 3, 97123, 877069},
       //   fails if the modulus divides the discriminant
-      {39, 387, 22651, 95, 27, 22651}
+      {39, 387, 22651, 95, 27, 22651}};
       */
   };
 
