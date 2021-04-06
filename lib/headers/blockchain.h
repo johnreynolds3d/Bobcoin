@@ -1,72 +1,71 @@
 #ifndef blockchain_h
 #define blockchain_h
 
-struct User {
-  unsigned char *name;
-  unsigned char *public_key;
-  unsigned char *private_key;
-  struct Wallet *wallet;
-};
-
-struct Wallet {
-  unsigned char *address;
-  unsigned char *public_key;
-  unsigned char *private_key;
-  unsigned long balance;
-  struct Transaction *transactions[5];
-};
-
-struct Transaction {
+typedef struct Transaction {
   unsigned char *payee_address;
   unsigned long amount;
   unsigned char *payer_public_key;
   unsigned char *payer_signature;
-};
+} Transaction;
 
-struct BlockHeader {
+typedef struct Wallet {
+  unsigned char *address;
+  unsigned char *public_key;
+  unsigned char *private_key;
+  unsigned long balance;
+  Transaction *transactions[8];
+} Wallet;
+
+typedef struct BlockHeader {
   unsigned char *version;
   unsigned char *hash_prev_block;
   unsigned char *hash_merkle_root;
   unsigned long time;
   unsigned long bits;
   unsigned long nonce;
-};
+} BlockHeader;
 
-struct Block {
+typedef struct Block {
   const unsigned long magic_number;
   unsigned long block_size;
   unsigned long transaction_counter;
-  struct BlockHeader *block_header;
-  struct Transaction *transactions[5];
-};
+  BlockHeader *block_header;
+  Transaction *transactions[8];
+} Block;
+
+typedef struct User {
+  unsigned char *name;
+  unsigned char *public_key;
+  unsigned char *private_key;
+  Wallet *wallet;
+} User;
 
 void GetSignature(long f, unsigned long *signature_buffer);
 
 unsigned char *GetHash(unsigned char *buffer, unsigned char *text);
 
-struct User *User_create(unsigned char *name);
+User *User_create(unsigned char *name);
 
-struct Wallet *Wallet_create(struct User *user);
+Wallet *Wallet_create(User *user);
 
-struct Transaction *Transaction_create(struct User *payer, struct User *payee,
-                                       unsigned long amount);
+Transaction *Transaction_create(User *payer, User *payee, unsigned long amount);
 
-struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
-                                       unsigned long bits);
+BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
+                                unsigned long bits);
 
-struct Block *Block_create(struct Transaction *transactions[],
-                           unsigned long transaction_counter);
+Block *Block_create(Transaction *transactions[],
+                    unsigned long transaction_counter);
 
-void User_print(struct User *user);
+void User_print(User *user);
 
-void Wallet_print(struct User *user);
+void Wallet_print(User *user);
 
-void Transaction_print(struct Transaction *transaction);
+void Transaction_print(Transaction *transaction);
 
-void Block_print(struct Block *block);
+void Block_print(Block *block);
 
-void User_destroy(struct User *user);
+void User_destroy(User *user);
 
-void Block_destroy(struct Block *block);
+void Block_destroy(Block *block);
 
 #endif

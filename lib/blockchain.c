@@ -30,11 +30,11 @@ unsigned char *GetHash(unsigned char *buffer, unsigned char *text) {
   return buffer;
 }
 
-struct User *User_create(unsigned char *name) {
+User *User_create(unsigned char *name) {
 
   assert(name != NULL);
 
-  struct User *user = calloc(1, sizeof(struct User));
+  User *user = calloc(1, sizeof(User));
   assert(user != NULL);
 
   user->name = calloc(strlen((const char *)(name)) + 1, sizeof(char));
@@ -72,11 +72,11 @@ struct User *User_create(unsigned char *name) {
   return user;
 }
 
-struct Wallet *Wallet_create(struct User *user) {
+Wallet *Wallet_create(User *user) {
 
   assert(user != NULL);
 
-  struct Wallet *wallet = calloc(1, sizeof(struct Wallet));
+  Wallet *wallet = calloc(1, sizeof(Wallet));
   assert(wallet != NULL);
 
   wallet->address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
@@ -104,12 +104,12 @@ struct Wallet *Wallet_create(struct User *user) {
   return wallet;
 }
 
-struct Transaction *Transaction_create(struct User *payer, struct User *payee,
-                                       unsigned long amount) {
+Transaction *Transaction_create(User *payer, User *payee,
+                                unsigned long amount) {
 
   assert(payer != NULL && payee != NULL);
 
-  struct Transaction *transaction = calloc(1, sizeof(struct Transaction));
+  Transaction *transaction = calloc(1, sizeof(Transaction));
   assert(transaction != NULL);
 
   transaction->payee_address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
@@ -214,11 +214,11 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 }
 
 /*
-struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
+ BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                        unsigned long bits) {
 
 
-  struct BlockHeader *block_header = calloc(1, sizeof(struct BlockHeader));
+   BlockHeader *block_header = calloc(1, sizeof( BlockHeader));
   assert(block_header != NULL);
 
   block_header->hash_prev_block = calloc(SHA256_BLOCK_SIZE, sizeof(char));
@@ -234,7 +234,7 @@ struct BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
 
   time_t current_time = time(NULL);
 
-  struct tm *time_info = gmtime(&current_time);
+   tm *time_info = gmtime(&current_time);
 
   unsigned char *gmt = asctime(time_info);
 
@@ -284,12 +284,12 @@ transactions);
 }
 */
 
-struct Block *Block_create(struct Transaction *transactions[],
-                           unsigned long transaction_counter) {
+Block *Block_create(Transaction *transactions[],
+                    unsigned long transaction_counter) {
 
   assert(transactions != NULL);
 
-  struct Block *block = calloc(1, sizeof(struct Block));
+  Block *block = calloc(1, sizeof(Block));
   assert(block != NULL);
 
   *(unsigned long *)&block->magic_number = 0xD9B4BEF9UL;
@@ -390,7 +390,7 @@ struct Block *Block_create(struct Transaction *transactions[],
   return block;
 }
 
-void User_print(struct User *user) {
+void User_print(User *user) {
 
   assert(user != NULL);
 
@@ -409,7 +409,7 @@ void User_print(struct User *user) {
   Wallet_print(user);
 }
 
-void Wallet_print(struct User *user) {
+void Wallet_print(User *user) {
 
   assert(user != NULL);
 
@@ -445,7 +445,7 @@ void Wallet_print(struct User *user) {
   printf("     wallet balance:\t\t%lu BOB\n\n", user->wallet->balance);
 }
 
-void User_destroy(struct User *user) {
+void User_destroy(User *user) {
 
   assert(user != NULL);
 
@@ -460,7 +460,7 @@ void User_destroy(struct User *user) {
   free(user);
 }
 
-void Transaction_print(struct Transaction *transaction) {
+void Transaction_print(Transaction *transaction) {
 
   assert(transaction != NULL);
 
@@ -493,11 +493,11 @@ void Transaction_print(struct Transaction *transaction) {
   */
 }
 
-void Block_print(struct Block *block) {
+void Block_print(Block *block) {
 
   assert(block != NULL);
 
-  printf("\nBlock:\n\n");
+  printf("\n\n\nBlock:\n");
   printf("\ttransaction counter:\t%ld\n", block->transaction_counter);
   printf("\n     block transactions:\n");
 
@@ -539,7 +539,7 @@ void Block_print(struct Block *block) {
 }
 
 /*
-void Block_destroy(struct Block *block) {
+void Block_destroy( Block *block) {
 
   assert(block != NULL && block->block_header != NULL &&
          block->transactions != NULL);

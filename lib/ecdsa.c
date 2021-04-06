@@ -200,7 +200,7 @@ int ellinit(long i[]) {
   if (e.r < 5 || e.r > mxr) {
     return 0;
   }
-  printf("\n\n\telliptic curve init:");
+  printf("\n\telliptic curve init:");
   printf("\tE: y^2 = x^3 + %ldx + %ld", a, b);
   printf(" (mod %lld)\n", e.N);
   pprint("\t\t\t\tbase point G", e.G);
@@ -366,7 +366,7 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
   if (t) {
     printf("\n\n\t\t\t\t\t  -----------\n\t\t\t\t\t     "
            "VALID\n\t\t\t\t\t  -------"
-           "----\n\n");
+           "----\n");
     signature_buffer[0] = sg.a;
     signature_buffer[1] = sg.b;
   }
@@ -380,7 +380,7 @@ void ec_dsa(long f, long d, unsigned long *signature_buffer) {
   return;
 
 errmsg:
-  printf("\n\n\t\t\t\t  ---------------------------");
+  printf("\n\t\t\t\t  ---------------------------");
   printf("\n\t\t\t\t     INVALID PARAMETER SET");
   printf("\n\t\t\t\t  ---------------------------\n");
 }
