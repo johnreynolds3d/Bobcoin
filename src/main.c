@@ -1,4 +1,4 @@
-#include "../lib/headers/blockchain.h"
+#include "../lib/headers/bobcoin.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -1,10 +1,10 @@
 CFLAGS = -std=c17 -Wall -Werror -Wextra -Wpedantic -g -O2
 
-../../bin/windows/blockchain.exe : ../../src/main.c ../../build/windows/blockchain.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o
-	gcc -o ../../bin/windows/blockchain.exe ../../src/main.c ../../build/windows/blockchain.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o
+../../bin/windows/bobcoin.exe : ../../src/main.c ../../build/windows/bobcoin.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o
+	gcc -o ../../bin/windows/bobcoin.exe ../../src/main.c ../../build/windows/bobcoin.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o
 
-../../build/windows/blockchain.o : ../../lib/blockchain.c ../../lib/headers/blockchain.h
-	gcc -c -fpic -o ../../build/windows/blockchain.o ../../lib/blockchain.c
+../../build/windows/bobcoin.o : ../../lib/bobcoin.c ../../lib/headers/bobcoin.h
+	gcc -c -fpic -o ../../build/windows/bobcoin.o ../../lib/bobcoin.c
 
 ../../build/windows/ecdsa.o : ../../lib/ecdsa.c ../../lib/headers/ecdsa.h
 	gcc -c -fpic -o ../../build/windows/ecdsa.o ../../lib/ecdsa.c
@@ -13,4 +13,4 @@ CFLAGS = -std=c17 -Wall -Werror -Wextra -Wpedantic -g -O2
 	gcc -c -fpic -o ../../build/windows/sha256.o ../../lib/sha256.c
 
 clean : 
-	rm ../../bin/windows/blockchain.exe ../../build/windows/blockchain.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o
+	rm ../../bin/windows/bobcoin.exe ../../build/windows/bobcoin.o ../../build/windows/ecdsa.o ../../build/windows/sha256.o

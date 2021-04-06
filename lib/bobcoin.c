@@ -1,4 +1,4 @@
-#include "headers/blockchain.h"
+#include "headers/bobcoin.h"
 #include "headers/ecdsa.h"
 #include "headers/sha256.h"
 #include <assert.h>
