@@ -3,7 +3,6 @@
 #include "headers/sha256.h"
 #include <assert.h>
 #include <math.h>
-#include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -89,8 +88,10 @@ struct Wallet *Wallet_create(struct User *user) {
   wallet->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(wallet->private_key != NULL);
 
-  wallet->transactions = calloc(1, sizeof(struct Transaction));
+  /*
+  wallet->transactions = calloc(2, sizeof(struct Transaction));
   assert(wallet->transactions != NULL);
+  */
 
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
 
@@ -140,7 +141,7 @@ struct Transaction *Transaction_create(struct User *payer, struct User *payee,
 
   unsigned char amount_buffer[size_amount + 1];
   snprintf((char *)amount_buffer, size_amount + 1, "%lu", amount);
-  printf("\ttransaction amount:\t%s\n", amount_buffer);
+  printf("\ttransaction amount:\t%s BOB\n", amount_buffer);
 
   unsigned int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
   assert(size_time > 0);
@@ -297,7 +298,7 @@ struct Block *Block_create(unsigned char *hash_prev_block, unsigned long bits,
   assert(hash_prev_block != NULL && transactions != NULL);
 */
 
-struct Block *Block_create(struct Transaction **transactions,
+struct Block *Block_create(struct Transaction *transactions[],
                            unsigned long transaction_counter) {
 
   assert(transactions != NULL);
@@ -309,8 +310,10 @@ struct Block *Block_create(struct Transaction **transactions,
 
   block->transaction_counter = transaction_counter;
 
+  /*
   block->transactions = calloc(1, sizeof(struct Transaction));
   assert(block->transactions != NULL);
+  */
 
   unsigned int i = 0;
 
@@ -450,14 +453,13 @@ void Wallet_print(struct User *user) {
   }
   printf("\n");
 
-  printf("\twallet balance:\t\t%lu\n", user->wallet->balance);
+  printf("\twallet balance:\t\t%lu BOB\n", user->wallet->balance);
 }
 
 void User_destroy(struct User *user) {
 
   assert(user != NULL);
 
-  free(user->wallet->transactions);
   free(user->wallet->private_key);
   free(user->wallet->public_key);
   free(user->wallet->address);
@@ -483,7 +485,7 @@ void Transaction_print(struct Transaction *transaction) {
   }
   printf("\n");
 
-  printf("\ttransaction amount:\t%lu\n", transaction->amount);
+  printf("\ttransaction amount:\t%lu BOB\n", transaction->amount);
 
   printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
 
@@ -556,8 +558,6 @@ void Block_destroy(struct Block *block) {
   free(block->block_header->hash_merkle_root);
   free(block->block_header->hash_prev_block);
   free(block->block_header);
-
-  free(block->transactions);
 
   free(block);
 }
