@@ -30,7 +30,7 @@ unsigned char *GetHash(unsigned char *buffer, unsigned char *text) {
   return buffer;
 }
 
-User *User_create(unsigned char *name) {
+User *User_create(char *name) {
 
   assert(name != NULL);
 
@@ -48,9 +48,9 @@ User *User_create(unsigned char *name) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
-  unsigned int i = 0;
+  int i;
 
-  const char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
@@ -58,7 +58,7 @@ User *User_create(unsigned char *name) {
 
   for (i = 3; i < SHA256_BLOCK_SIZE * 2; i++) {
     user->public_key[i] =
-        alphanum[rand() % ((strlen((const char *)alphanum) - 1) - 0 + 1) + 0];
+        alphanum[rand() % ((strlen((char *)(alphanum)) - 1) - 0 + 1) + 0];
   }
   user->public_key[SHA256_BLOCK_SIZE * 2] = '\0';
 
@@ -88,6 +88,9 @@ Wallet *Wallet_create(User *user) {
   wallet->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
   assert(wallet->private_key != NULL);
 
+  wallet->transactions = calloc(8, sizeof(Transaction));
+  assert(wallet->transactions != NULL);
+
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
 
   GetHash(buffer, user->public_key);
@@ -104,8 +107,7 @@ Wallet *Wallet_create(User *user) {
   return wallet;
 }
 
-Transaction *Transaction_create(User *payer, User *payee,
-                                unsigned long amount) {
+Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
 
   assert(payer != NULL && payee != NULL);
 
@@ -131,17 +133,17 @@ Transaction *Transaction_create(User *payer, User *payee,
   // ------------------------------ HASHING ------------------------------------
 
   // concatenate address, amount, and time into a string for hashing
-  unsigned int size_amount = snprintf(NULL, 0, "%lu", amount);
+  int size_amount = snprintf(NULL, 0, "%d", amount);
   assert(size_amount > 0);
 
-  unsigned char amount_buffer[size_amount + 1];
-  snprintf((char *)amount_buffer, size_amount + 1, "%lu", amount);
+  char amount_buffer[size_amount + 1];
+  snprintf((char *)amount_buffer, size_amount + 1, "%d", amount);
   printf("\ttransaction amount:\t%s BOB\n", amount_buffer);
 
-  unsigned int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
+  int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
   assert(size_time > 0);
 
-  unsigned char time_buffer[size_time];
+  char time_buffer[size_time];
   snprintf((char *)time_buffer, size_time, "%lu", (unsigned long)time(NULL));
   printf("\ttransaction time:\t%s (seconds since 1970-01-01T00:00:00Z)\n",
          time_buffer);
@@ -158,8 +160,6 @@ Transaction *Transaction_create(User *payer, User *payee,
   strncat((char *)text_buffer, (const char *)amount_buffer,
           sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
 
-  unsigned int i = 0;
-
   /*
   printf("\ttransaction text:\t");
   for (i = 0; i < strlen((const char *)(text_buffer)); i++) {
@@ -173,7 +173,7 @@ Transaction *Transaction_create(User *payer, User *payee,
   GetHash(hash_buffer, text_buffer);
 
   printf("\ttransaction hash:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", hash_buffer[i]);
   }
   printf("\n");
@@ -284,8 +284,7 @@ transactions);
 }
 */
 
-Block *Block_create(Transaction *transactions[],
-                    unsigned long transaction_counter) {
+Block *Block_create(Transaction **transactions, int transaction_counter) {
 
   assert(transactions != NULL);
 
@@ -296,9 +295,10 @@ Block *Block_create(Transaction *transactions[],
 
   block->transaction_counter = transaction_counter;
 
-  unsigned int i = 0;
+  block->transactions = calloc(8, sizeof(Transaction));
+  assert(block->transactions != NULL);
 
-  for (i = 0; i < transaction_counter; i++) {
+  for (int i = 0; i < transaction_counter; i++) {
     block->transactions[i] = transactions[i];
   }
 
@@ -396,12 +396,10 @@ void User_print(User *user) {
 
   printf("\n\tuser name:\t\t%s\n", user->name);
 
-  unsigned int i = 0;
-
   printf("\tuser public key:\t%s\n", user->public_key);
 
   printf("\tuser private key:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->private_key[i]);
   }
   printf("\n");
@@ -413,7 +411,7 @@ void Wallet_print(User *user) {
 
   assert(user != NULL);
 
-  unsigned int i = 0;
+  int i;
 
   printf("\twallet address:\t\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
@@ -442,7 +440,7 @@ void Wallet_print(User *user) {
   }
   printf("\n");
 
-  printf("     wallet balance:\t\t%lu BOB\n\n", user->wallet->balance);
+  printf("     wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
 }
 
 void User_destroy(User *user) {
@@ -452,11 +450,14 @@ void User_destroy(User *user) {
   free(user->wallet->private_key);
   free(user->wallet->public_key);
   free(user->wallet->address);
+  free(user->wallet->transactions);
+
   free(user->wallet);
 
   free(user->private_key);
   free(user->public_key);
   free(user->name);
+
   free(user);
 }
 
@@ -464,17 +465,15 @@ void Transaction_print(Transaction *transaction) {
 
   assert(transaction != NULL);
 
-  unsigned int i = 0;
-
   // printf("\nTransaction verified:\n");
 
   printf("\n\tpayee wallet address:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
+  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
   }
   printf("\n");
 
-  printf("\ttransaction amount:\t%lu BOB\n", transaction->amount);
+  printf("\ttransaction amount:\t%d BOB\n", transaction->amount);
 
   printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
 
@@ -498,12 +497,10 @@ void Block_print(Block *block) {
   assert(block != NULL);
 
   printf("\n\n\nBlock:\n");
-  printf("\ttransaction counter:\t%ld\n", block->transaction_counter);
+  printf("\ttransaction counter:\t%d\n", block->transaction_counter);
   printf("\n     block transactions:\n");
 
-  unsigned int i = 0;
-
-  for (i = 0; i < block->transaction_counter; i++) {
+  for (int i = 0; i < block->transaction_counter; i++) {
     Transaction_print(block->transactions[i]);
   }
 

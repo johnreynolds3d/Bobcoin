@@ -200,7 +200,7 @@ int ellinit(long i[]) {
   if (e.r < 5 || e.r > mxr) {
     return 0;
   }
-  printf("\n\telliptic curve init:");
+  printf("\n\n\telliptic curve init:");
   printf("\tE: y^2 = x^3 + %ldx + %ld", a, b);
   printf(" (mod %lld)\n", e.N);
   pprint("\t\t\t\tbase point G", e.G);

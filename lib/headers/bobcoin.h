@@ -3,7 +3,7 @@
 
 typedef struct Transaction {
   unsigned char *payee_address;
-  unsigned long amount;
+  unsigned int amount;
   unsigned char *payer_public_key;
   unsigned char *payer_signature;
 } Transaction;
@@ -12,8 +12,8 @@ typedef struct Wallet {
   unsigned char *address;
   unsigned char *public_key;
   unsigned char *private_key;
-  unsigned long balance;
-  Transaction *transactions[8];
+  unsigned int balance;
+  Transaction **transactions;
 } Wallet;
 
 typedef struct BlockHeader {
@@ -27,14 +27,14 @@ typedef struct BlockHeader {
 
 typedef struct Block {
   const unsigned long magic_number;
-  unsigned long block_size;
-  unsigned long transaction_counter;
+  unsigned int block_size;
+  unsigned int transaction_counter;
   BlockHeader *block_header;
-  Transaction *transactions[8];
+  Transaction **transactions;
 } Block;
 
 typedef struct User {
-  unsigned char *name;
+  char *name;
   unsigned char *public_key;
   unsigned char *private_key;
   Wallet *wallet;
@@ -44,17 +44,16 @@ void GetSignature(long f, unsigned long *signature_buffer);
 
 unsigned char *GetHash(unsigned char *buffer, unsigned char *text);
 
-User *User_create(unsigned char *name);
+User *User_create(char *name);
 
 Wallet *Wallet_create(User *user);
 
-Transaction *Transaction_create(User *payer, User *payee, unsigned long amount);
+Transaction *Transaction_create(User *payer, User *payee, unsigned int amount);
 
 BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                 unsigned long bits);
 
-Block *Block_create(Transaction *transactions[],
-                    unsigned long transaction_counter);
+Block *Block_create(Transaction **transactions, int transaction_counter);
 
 void User_print(User *user);
 
