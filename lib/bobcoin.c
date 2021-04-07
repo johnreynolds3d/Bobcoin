@@ -48,13 +48,13 @@ User *User_create(char *name) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
-  int i;
-
   char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
   user->public_key[2] = '1';
+
+  int i;
 
   for (i = 3; i < SHA256_BLOCK_SIZE * 2; i++) {
     user->public_key[i] =
@@ -395,7 +395,6 @@ void User_print(User *user) {
   assert(user != NULL);
 
   printf("\n\tuser name:\t\t%s\n", user->name);
-
   printf("\tuser public key:\t%s\n", user->public_key);
 
   printf("\tuser private key:\t");
@@ -451,13 +450,11 @@ void User_destroy(User *user) {
   free(user->wallet->public_key);
   free(user->wallet->address);
   free(user->wallet->transactions);
-
   free(user->wallet);
 
   free(user->private_key);
   free(user->public_key);
   free(user->name);
-
   free(user);
 }
 
@@ -474,7 +471,6 @@ void Transaction_print(Transaction *transaction) {
   printf("\n");
 
   printf("\ttransaction amount:\t%d BOB\n", transaction->amount);
-
   printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
 
   /*
