@@ -4,9 +4,11 @@
 
 A slightly Lynchian implementation of a blockchain in C, this is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
 
-![Alt text](/img/bobcoin_screenshot_01.png?raw=true "Optional Title")
+![Screenshot](/img/bobcoin_screenshot_01.png?raw=true "")
 
 ## Why?
+
+The concept of the blockchain strikes me as a truly revolutioary idea with enormous potential, and I felt like the best way to gain a deeper understanding of it was to build one!
 
 ## Installation
 
