@@ -16,9 +16,21 @@ cd into the source directory:
 ```
   # cd bobcoin
 ```
-run make (on Linux or Mac; not sure about Windows WSL atm...):
+run make (on Linux; not sure about Windows atm...):
 ```
-  # make -C linux/build/
+  # make -C build/linux
+```
+or (on Mac):
+```
+  # make -C build/mac
+```
+Then run the program (on Linux) with:
+```
+  # ./bin/linux/bobcoin
+```
+or (on Mac):
+```
+  # ./bin/mac/bobcoin
 ```
 ## Tests
 
