@@ -1,17 +1,33 @@
 # bobcoin
 
-## A slightly *Lynchian* implementation of a blockchain in C
-
 ### There's something *decentralized* happening in the sleepy town of Twin Peaks...
 
-This is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
+A slightly *Lynchian* implementation of a blockchain in C, this is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
 
 ## Why?
 
 ## Installation
 
+Download this repo:
+```
+  # git clone git@github.com:johnreynolds3d/bobcoin.git
+```
+cd into the source directory:
+```
+  # cd bobcoin
+```
+run make (on Linux or Mac; not sure about Windows WSL atm...):
+```
+  # make -C linux/build/
+```
 ## Tests
 
+I've been using Valgrind (on Linux) to highlight potential memory issues. 
+
+On Linux, run:
+```
+  # sh test/linux/runtests.sh
+```
 ## Credits
 
 On Linux, run the following command from the source directory:
