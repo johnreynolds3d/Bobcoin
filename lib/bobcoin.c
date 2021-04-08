@@ -160,14 +160,6 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   strncat((char *)text_buffer, (const char *)amount_buffer,
           sizeof(text_buffer) - strlen((const char *)text_buffer) - 1);
 
-  /*
-  printf("\ttransaction text:\t");
-  for (i = 0; i < strlen((const char *)(text_buffer)); i++) {
-    printf("%.2x", text_buffer[i]);
-  }
-  printf("\n");
-  */
-
   unsigned char hash_buffer[SHA256_BLOCK_SIZE] = {'0'};
 
   GetHash(hash_buffer, text_buffer);
@@ -184,11 +176,6 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   assert(signature_buffer != 0);
 
   GetSignature((long)hash_buffer, signature_buffer);
-
-  /*
-  printf("\n\tsignature (c, d):\t(%ld, %ld)\n", signature_buffer[0],
-         signature_buffer[1]);
-         */
 
   transaction->amount = amount;
 
@@ -213,77 +200,6 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   return transaction;
 }
 
-/*
- BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
-                                       unsigned long bits) {
-
-
-   BlockHeader *block_header = calloc(1, sizeof( BlockHeader));
-  assert(block_header != NULL);
-
-  block_header->hash_prev_block = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block_header->hash_prev_block != NULL);
-
-  block_header->hash_merkle_root = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block_header->hash_merkle_root != NULL);
-
-  block_header->time = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block_header->time != NULL);
-
-  block_header->version = 1.0f;
-
-  time_t current_time = time(NULL);
-
-   tm *time_info = gmtime(&current_time);
-
-  unsigned char *gmt = asctime(time_info);
-
-  block_header->time = calloc(strlen(const char *)(gmt) + 1, sizeof(char));
-  assert(block_header->time != NULL);
-
-  strcpy(block_header->time, gmt);
-
-  block_header->bits = bits;
-  printf("\tbits:\t\t%lu\n", block_header->bits);
-
-  block_header->nonce = 0;
-  printf("\tnonce:\t\t%lu\n", block_header->nonce);
-
-  block_header->hash_prev_block = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block_header->hash_prev_block != NULL);
-  memcpy(block_header->hash_prev_block, hash_prev_block, SHA256_BLOCK_SIZE);
-
-  // ---------------------------- HASH_MERKLE_ROOT -----------------------------
-
-  block->transactions = calloc(strlen(const char *)(transactions) + 1,
-sizeof(char)); assert(block->transactions != NULL); strcpy(block->transactions,
-transactions);
-
-  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->hash != NULL);
-
-  BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
-
-  unsigned char *text =
-      calloc(strlen(const char *)(transactions) + 1 + strlen(const char
-*)(nonce) + 1, sizeof(char)); assert(text != NULL);
-
-  memcpy(text, transactions, strlen(const char *)(transactions) + 1);
-  strcat(text, nonce);
-
-  printf("\ttext:\t\t%s", text);
-
-  Hash(buffer, transactions);
-
-  memcpy(block_header->hash_prev_block, buffer, SHA256_BLOCK_SIZE);
-
-  free(text);
-  free(nonce);
-
-  return block_header;
-}
-*/
-
 Block *Block_create(Transaction **transactions, int transaction_counter) {
 
   assert(transactions != NULL);
@@ -301,91 +217,6 @@ Block *Block_create(Transaction **transactions, int transaction_counter) {
   for (int i = 0; i < transaction_counter; i++) {
     block->transactions[i] = transactions[i];
   }
-
-  /*
-  // unsigned long bits = rand() % (((int)pow(2, 32) - 1) - 0 + 1) + 0;
-
-  block->block_header = BlockHeader_create(hash_prev_block, bits);
-  assert(block->block_header != NULL);
-
-  block->hash = calloc(SHA256_BLOCK_SIZE, sizeof(char));
-  assert(block->hash != NULL);
-
-  BYTE buffer[SHA256_BLOCK_SIZE] = {'a'};
-
-  char *text =
-      calloc(strlen(const char *)(transactions) + 1 + strlen(const char
-*)(nonce) + 1, sizeof(char)); assert(text != NULL);
-
-  memcpy(text, transactions, strlen(const char *)(transactions) + 1);
-  strcat(text, nonce);
-
-  printf("\ttext:\t\t%s", text);
-
-  Hash(buffer, transactions);
-
-  memcpy(block->hash, buffer, SHA256_BLOCK_SIZE);
-
-  return NULL;
-
-  // --------------------------- PROOF OF WORK ---------------------------------
-
-  printf("\nLooking for exactly %lu leading zeros...\n\n", bits);
-
-  int i = 0;
-  int j = 0;
-  int k = 0;
-
-  unsigned int buffer[256] = {0};
-
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    for (j = 7; j >= 0; --j) {
-      buffer[k] =
-          ((block->block_header->hash_prev_block[i] & (1 << j)) ? 1 : 0);
-      k++;
-    }
-  }
-  printf("\n");
-
-  printf("\tbuffer:\t");
-
-  if (bits > 0) {
-    for (i = 0; i < bits; i++) {
-      printf("%d", buffer[i]);
-    }
-  }
-
-  printf("\n\n");
-
-  if (bits == 0 && buffer[0] == 1) {
-    printf(
-        "\t\t************ Found exactly %lu leading zeros!!! ************\n\n",
-        bits);
-    Block_print(block);
-    return block;
-  }
-
-  for (i = 0; i < bits; i++) {
-
-    if (buffer[i] != 0) {
-      printf("Found fewer than %lu leading zeros; try again!\n\n", bits);
-      break;
-    }
-
-    if (i == bits - 1) {
-      if (buffer[bits] != 1) {
-        printf("Found more than %lu leading zeros; try again!\n\n", bits);
-        break;
-      } else {
-        printf("\t\t************ Found exactly %lu leading zeros!!! "
-               "************\n\n",
-               bits);
-        Block_print(block);
-        return block;
-      }
-    }
-  }
-*/
 
   return block;
 }
@@ -462,8 +293,6 @@ void Transaction_print(Transaction *transaction) {
 
   assert(transaction != NULL);
 
-  // printf("\nTransaction verified:\n");
-
   printf("\n\tpayee wallet address:\t");
   for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
@@ -472,20 +301,6 @@ void Transaction_print(Transaction *transaction) {
 
   printf("\ttransaction amount:\t%d BOB\n", transaction->amount);
   printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
-
-  /*
-  printf("\tpayer public key:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", transaction->payer_public_key[i]);
-  }
-  printf("\n");
-
-  printf("\tpayer signature:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", transaction->payer_signature[i]);
-  }
-  printf("\n");
-  */
 }
 
 void Block_print(Block *block) {
@@ -499,49 +314,4 @@ void Block_print(Block *block) {
   for (int i = 0; i < block->transaction_counter; i++) {
     Transaction_print(block->transactions[i]);
   }
-
-  /*
-  printf("\ttime:\t%s", block->block_header->time);
-
-  unsigned int i = 0;
-  unsigned int j = 0;
-
-  printf("\thash prev block:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", block->block_header->hash_prev_block[i]);
-  }
-  printf("\n");
-
-  printf("\thash merkle root:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    printf("%.2x", block->block_header->hash_merkle_root[i]);
-  }
-  printf("\n");
-
-  Transaction_print(block->transactions);
-
-  printf("\thmr binary:\t");
-  for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
-    for (j = 7; j >= 0; --j) {
-      putchar((block->block_header->hash_merkle_root[i] & (1 << j)) ? '1'
-                                                                    : '0');
-    }
-  }
-  printf("\n");
-*/
 }
-
-/*
-void Block_destroy( Block *block) {
-
-  assert(block != NULL && block->block_header != NULL &&
-         block->transactions != NULL);
-
-  free(block->block_header->time);
-  free(block->block_header->hash_merkle_root);
-  free(block->block_header->hash_prev_block);
-  free(block->block_header);
-
-  free(block);
-}
-*/
