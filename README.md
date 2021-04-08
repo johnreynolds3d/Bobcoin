@@ -8,7 +8,7 @@ A slightly Lynchian implementation of a blockchain in C, this is a work in progr
 
 ## Why?
 
-The concept of the blockchain strikes me as a truly revolutioary idea with enormous potential, and I felt like the best way to gain a deeper understanding of it was to build one!
+The concept of the blockchain strikes me as a truly revolutionary idea with enormous potential, and I felt like the best way to gain a deeper understanding of it was to build one!
 
 ## Installation
 
