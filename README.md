@@ -2,7 +2,7 @@
 
 ### There's something *decentralized* happening in the sleepy town of Twin Peaks...
 
-A slightly *Lynchian* implementation of a blockchain in C, this is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
+A slightly Lynchian implementation of a blockchain in C, this is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
 
 ![Alt text](/img/bobcoin_screenshot_01.png?raw=true "Optional Title")
 
@@ -26,7 +26,7 @@ or (on Mac):
 ```
   # make -C build/mac
 ```
-Then run the program (on Linux) with:
+then run the program (on Linux) with:
 ```
   # ./bin/linux/bobcoin
 ```
@@ -36,9 +36,9 @@ or (on Mac):
 ```
 ## Tests
 
-I've been using Valgrind (on Linux) to highlight potential memory issues. 
+I've been using Valgrind to highlight potential memory issues. 
 
-On Linux, run:
+on Linux, run:
 ```
   # sh test/linux/runtests.sh
 ```
