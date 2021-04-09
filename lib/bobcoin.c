@@ -197,10 +197,13 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   free(text_buffer);
   free(signature_buffer);
 
+  Transaction_print(transaction);
+
   return transaction;
 }
 
-Block *Block_create(Transaction **transactions, int transaction_counter) {
+Block *Block_create(Transaction **transactions, int transaction_counter,
+                    int block_counter) {
 
   assert(transactions != NULL);
 
@@ -218,14 +221,17 @@ Block *Block_create(Transaction **transactions, int transaction_counter) {
     block->transactions[i] = transactions[i];
   }
 
+  Block_print(block, block_counter);
+
   return block;
 }
 
-void User_print(User *user) {
+void User_print(User *user, int user_counter) {
 
   assert(user != NULL);
 
-  printf("\n\tuser name:\t\t%s\n", user->name);
+  printf("\nUser %d:\n", user_counter);
+  printf("\tuser name:\t\t%s\n", user->name);
   printf("\tuser public key:\t%s\n", user->public_key);
 
   printf("\tuser private key:\t");
@@ -273,27 +279,11 @@ void Wallet_print(User *user) {
   printf("     wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
 }
 
-void User_destroy(User *user) {
-
-  assert(user != NULL);
-
-  free(user->wallet->private_key);
-  free(user->wallet->public_key);
-  free(user->wallet->address);
-  free(user->wallet->transactions);
-  free(user->wallet);
-
-  free(user->private_key);
-  free(user->public_key);
-  free(user->name);
-  free(user);
-}
-
 void Transaction_print(Transaction *transaction) {
 
   assert(transaction != NULL);
 
-  printf("\n\tpayee wallet address:\t");
+  printf("\n\n\tpayee wallet address:\t");
   for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
   }
@@ -303,15 +293,51 @@ void Transaction_print(Transaction *transaction) {
   printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
 }
 
-void Block_print(Block *block) {
+void Block_print(Block *block, int block_counter) {
 
   assert(block != NULL);
 
-  printf("\n\n\nBlock:\n");
-  printf("\ttransaction counter:\t%d\n", block->transaction_counter);
-  printf("\n     block transactions:\n");
+  printf("\n\n\t\t\t       -------------------------------------\n");
+  printf("\t\t\t                     BLOCK %d\n", block_counter);
+  printf("\t\t\t       -------------------------------------\n\n");
+
+  printf("\n\ttransaction counter:\t%d\n\n", block->transaction_counter);
+  printf("     block transactions:");
 
   for (int i = 0; i < block->transaction_counter; i++) {
     Transaction_print(block->transactions[i]);
   }
+}
+
+void Transaction_destroy(Transaction *transaction) {
+
+  assert(transaction != NULL);
+
+  free(transaction->payer_signature);
+  free(transaction->payer_public_key);
+  free(transaction->payee_address);
+
+  free(transaction);
+}
+
+void Block_destroy(Block *block) {
+  assert(block != NULL);
+  free(block->transactions);
+  free(block);
+}
+
+void User_destroy(User *user) {
+
+  assert(user != NULL);
+
+  free(user->wallet->transactions);
+  free(user->wallet->private_key);
+  free(user->wallet->public_key);
+  free(user->wallet->address);
+  free(user->wallet);
+
+  free(user->private_key);
+  free(user->public_key);
+  free(user->name);
+  free(user);
 }

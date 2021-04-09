@@ -44,27 +44,30 @@ void GetSignature(long f, unsigned long *signature_buffer);
 
 unsigned char *GetHash(unsigned char *buffer, unsigned char *text);
 
-User *User_create(char *name);
+Transaction *Transaction_create(User *payer, User *payee, unsigned int amount);
 
 Wallet *Wallet_create(User *user);
-
-Transaction *Transaction_create(User *payer, User *payee, unsigned int amount);
 
 BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
                                 unsigned long bits);
 
-Block *Block_create(Transaction **transactions, int transaction_counter);
+Block *Block_create(Transaction **transactions, int transaction_counter,
+                    int block_counter);
 
-void User_print(User *user);
-
-void Wallet_print(User *user);
+User *User_create(char *name);
 
 void Transaction_print(Transaction *transaction);
 
-void Block_print(Block *block);
+void Wallet_print(User *user);
 
-void User_destroy(User *user);
+void Block_print(Block *block, int block_counter);
+
+void User_print(User *user, int user_counter);
+
+void Transaction_destroy(Transaction *transaction);
 
 void Block_destroy(Block *block);
+
+void User_destroy(User *user);
 
 #endif
