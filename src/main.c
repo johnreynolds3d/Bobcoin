@@ -12,52 +12,41 @@ int main() {
          "------------------\n");
   printf("\n\t\t\t\t        Population 51,201\n\n\n\n");
   printf("\nHi there! Say hello to our friendly local users...\n");
+  
+  int num_users = 4;
+  int num_transactions = 8;
+  int num_blocks = 4;
 
-  User *users[4];
-  Transaction *transactions[8];
-  Block *blockchain[4];
+  User *users[num_users];
+  Transaction *transactions[num_transactions];
+  Block *blockchain[num_blocks];
 
-  int user_counter = 0;
-  int transaction_counter = 0;
-  int block_counter = 0;
-
-  users[0] = User_create((char *)"BOB");
-  user_counter++;
-
-  users[1] = User_create((char *)"Windom Earle");
-  user_counter++;
-
-  users[2] = User_create((char *)"Laura Palmer");
-  user_counter++;
-
-  users[3] = User_create((char *)"Dale Cooper");
-  user_counter++;
+  char **user_names = {"BOB", "Windom Earle", "Laura Palmer", "Dale Cooper"};
 
   int i;
 
-  for (i = 0; i < user_counter; i++) {
+  for (i = 0; i < num_users; i++) {
+    users[i] = User_create(user_names[i]);
     printf("\nUser %d:", i);
     User_print(users[i]);
   }
 
-  printf("\n\n\t    ------  Transaction 0 (Genesis): BOB creates the first 100 "
-         "bobcoin  ------\n\n");
-  users[0]->wallet->balance = 100;
-  transactions[0] = Transaction_create(users[0], users[0], 100);
-  users[0]->wallet->transactions[0] = transactions[0];
-  transaction_counter++;
+  for (i = 0; i < num_transactions; i++) {
 
-  printf("\nPayer:");
-  User_print(users[0]);
-  printf("\nPayee:");
-  User_print(users[0]);
+    printf("\n\n\t    ------  Transaction %d (Genesis): BOB creates the first 100 "
+           "bobcoin  ------\n\n", i);
 
-  printf("\n\n\t\t\t      -------------------------------------\n");
-  printf("\t\t\t                    BLOCK %d\n", block_counter);
-  printf("\t\t\t      -------------------------------------");
-  blockchain[0] = Block_create(&transactions[0], transaction_counter);
-  Block_print(blockchain[block_counter]);
-  block_counter++;
+    users[i]->wallet->balance = 100;
+    transactions[i] = Transaction_create(users[i], users[i], 100);
+    users[i]->wallet->transactions[i] = transactions[i];
+    Transaction_print(transactions[i];
+  
+    printf("\n\n\t\t\t      -------------------------------------\n");
+    printf("\t\t\t                    BLOCK %d\n", block_counter);
+    printf("\t\t\t      -------------------------------------");
+  
+    blockchain[i] = Block_create(&transactions[i], i+1);
+    Block_print(blockchain[i]);
 
   printf("\n\n\t\t -----  Transaction 1: BOB sends Windom Earle 25 bobcoin  "
          "-----\n\n");
