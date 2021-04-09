@@ -130,9 +130,6 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
 
   printf("\nTransaction pending:\n\n");
 
-  // ------------------------------ HASHING ------------------------------------
-
-  // concatenate address, amount, and time into a string for hashing
   int size_amount = snprintf(NULL, 0, "%d", amount);
   assert(size_amount > 0);
 
@@ -169,8 +166,6 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
     printf("%.2x", hash_buffer[i]);
   }
   printf("\n");
-
-  // ------------------------------ SIGNING ------------------------------------
 
   unsigned long *signature_buffer = calloc(2, sizeof(long));
   assert(signature_buffer != 0);
@@ -233,7 +228,6 @@ void User_print(User *user, int user_counter) {
   printf("\nUser %d:\n", user_counter);
   printf("\tuser name:\t\t%s\n", user->name);
   printf("\tuser public key:\t%s\n", user->public_key);
-
   printf("\tuser private key:\t");
   for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->private_key[i]);
@@ -321,7 +315,9 @@ void Transaction_destroy(Transaction *transaction) {
 }
 
 void Block_destroy(Block *block) {
+
   assert(block != NULL);
+
   free(block->transactions);
   free(block);
 }

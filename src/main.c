@@ -10,7 +10,7 @@ int main() {
 
   printf("\n\n\n\n\n\t\t  ------------------  WELCOME TO TWIN PEAKS  "
          "------------------\n\n");
-  printf("\t\t\t\t       Population 51,201\n\n\n\n\n");
+  printf("\t\t\t\t        Population 51,201\n\n\n\n\n");
   printf("Hi there! Say hello to our friendly local users...\n\n");
 
   int num_users = 4;
