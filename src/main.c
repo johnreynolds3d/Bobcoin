@@ -26,8 +26,7 @@ int main() {
   int i;
 
   for (i = 0; i < num_users; i++) {
-    users[i] = User_create(user_names[i]);
-    User_print(users[i], i);
+    users[i] = User_create(user_names[i], i);
   }
 
   printf("\n\n\t    ------  Transaction 0 (Genesis): BOB creates the first 100 "
