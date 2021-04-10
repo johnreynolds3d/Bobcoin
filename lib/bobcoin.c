@@ -48,7 +48,7 @@ User *User_create(char *name, int user_counter) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
-  char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  char alphanum[] = "0123456789abcdef";
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
