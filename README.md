@@ -12,38 +12,40 @@ The concept of the blockchain strikes me as a truly revolutionary idea with enor
 
 ## Installation
 
-Download this repo:
-```
-# git clone git@github.com:johnreynolds3d/bobcoin.git
-```
-cd into the source directory:
-```
-# cd bobcoin
-```
-run make (on Linux; not sure about Windows atm...):
-```
-# make -C build/linux
-```
-or (on Mac):
-```
-# make -C build/mac
-```
-then run the program (on Linux) with:
-```
-# ./bin/linux/bobcoin
-```
-or (on Mac):
-```
-# ./bin/mac/bobcoin
-```
+  1. Clone this repository
+     ```
+     # git clone git@github.com:johnreynolds3d/bobcoin.git
+     ```
+  2. cd into the source directory
+     ```
+     # cd bobcoin
+     ```
+  3. Run make (on Linux; not sure about Windows atm...)
+     ```
+     # make -C build/linux
+     ```
+     or, if you're on a Mac
+     ```
+     # make -C build/mac
+     ```
+  4. Then run the program (on Linux) with
+     ```
+     # ./bin/linux/bobcoin
+     ```
+     or, on Mac
+     ```
+     # ./bin/mac/bobcoin
+     ```
+
 ## Tests
 
 I've been using Valgrind to highlight potential memory issues. 
 
-on Linux, run:
-```
-# sh test/runtests.sh
-```
+  on Linux, run
+  ```
+  # sh test/runtests.sh
+  ```
+
 ## Credits
 
 This project utilizes code from:
