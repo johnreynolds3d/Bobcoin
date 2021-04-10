@@ -54,7 +54,7 @@ BlockHeader *BlockHeader_create(unsigned char *hash_prev_block,
 Block *Block_create(Transaction **transactions, int transaction_counter,
                     int block_counter);
 
-User *User_create(char *name);
+User *User_create(char *name, int user_counter);
 
 void Transaction_print(Transaction *transaction);
 

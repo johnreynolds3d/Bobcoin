@@ -30,7 +30,7 @@ unsigned char *GetHash(unsigned char *buffer, unsigned char *text) {
   return buffer;
 }
 
-User *User_create(char *name) {
+User *User_create(char *name, int user_counter) {
 
   assert(name != NULL);
 
@@ -48,7 +48,7 @@ User *User_create(char *name) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
-  char alphanum[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+  char alphanum[] = "0123456789abcdef";
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
@@ -68,6 +68,8 @@ User *User_create(char *name) {
   user->private_key[SHA256_BLOCK_SIZE] = '\0';
 
   user->wallet = Wallet_create(user);
+
+  User_print(user, user_counter);
 
   return user;
 }
@@ -243,7 +245,7 @@ void Wallet_print(User *user) {
 
   int i;
 
-  printf("\twallet address:\t\t");
+  printf("\n\twallet address:\t\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->wallet->address[i]);
   }
