@@ -32,7 +32,7 @@ The concept of the blockchain strikes me as a truly revolutionary idea with enor
      ```
      # ./bin/linux/bobcoin
      ```
-     or, on Mac
+     on Mac
      ```
      # ./bin/mac/bobcoin
      ```
@@ -41,10 +41,10 @@ The concept of the blockchain strikes me as a truly revolutionary idea with enor
 
 I've been using Valgrind to highlight potential memory issues. 
 
-  on Linux, run
-  ```
-  # sh test/runtests.sh
-  ```
+On Linux, run
+```
+# sh test/runtests.sh
+```
 
 ## Credits
 
