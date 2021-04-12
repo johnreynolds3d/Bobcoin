@@ -130,7 +130,7 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   memcpy(transaction->payer_public_key, payer->public_key,
          SHA256_BLOCK_SIZE * 2);
 
-  printf("\nTransaction pending:\n\n");
+  printf("\n  Transaction pending:\n\n");
 
   int size_amount = snprintf(NULL, 0, "%d", amount);
   assert(size_amount > 0);
@@ -264,15 +264,15 @@ void Wallet_print(User *user) {
   printf("\n");
 
   if (user->wallet->transactions[0] == NULL) {
-    printf("\n     wallet transactions:\tN/A\n");
+    printf("\n      wallet transactions:\tN/A\n");
   } else {
-    printf("\n     wallet transactions:\n");
+    printf("\n      wallet transactions:\n");
     for (i = 0; user->wallet->transactions[i] != NULL; i++)
       Transaction_print(user->wallet->transactions[i]);
   }
   printf("\n");
 
-  printf("     wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
+  printf("      wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
 }
 
 void Transaction_print(Transaction *transaction) {
@@ -297,8 +297,9 @@ void Block_print(Block *block, int block_counter) {
   printf("\t\t\t                     BLOCK %d\n", block_counter);
   printf("\t\t\t       -------------------------------------\n\n");
 
-  printf("\n\ttransaction counter:\t%d\n\n", block->transaction_counter);
-  printf("     block transactions:");
+  // printf("\n    Transaction counter:\t%d\n\n", block->transaction_counter);
+
+  printf("\n  Block transactions:");
 
   for (int i = 0; i < block->transaction_counter; i++) {
     Transaction_print(block->transactions[i]);
