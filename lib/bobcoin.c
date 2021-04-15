@@ -34,16 +34,16 @@ User *User_create(char *name, int user_counter) {
 
   assert(name != NULL);
 
-  User *user = calloc(1, sizeof(User));
+  User *user = malloc(sizeof(User));
   assert(user != NULL);
 
-  user->name = calloc(strlen((const char *)(name)) + 1, sizeof(char));
+  user->name = malloc((strlen((const char *)(name)) + 1) * sizeof(char));
   assert(user->name != NULL);
 
-  user->public_key = calloc((SHA256_BLOCK_SIZE * 2) + 1, sizeof(char));
+  user->public_key = malloc(((SHA256_BLOCK_SIZE * 2) + 1) * sizeof(char));
   assert(user->public_key != NULL);
 
-  user->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  user->private_key = malloc((SHA256_BLOCK_SIZE + 1) * sizeof(char));
   assert(user->private_key != NULL);
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
@@ -78,19 +78,19 @@ Wallet *Wallet_create(User *user) {
 
   assert(user != NULL);
 
-  Wallet *wallet = calloc(1, sizeof(Wallet));
+  Wallet *wallet = malloc(sizeof(Wallet));
   assert(wallet != NULL);
 
-  wallet->address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  wallet->address = malloc((SHA256_BLOCK_SIZE + 1) * sizeof(char));
   assert(wallet->address != NULL);
 
-  wallet->public_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  wallet->public_key = malloc((SHA256_BLOCK_SIZE + 1) * sizeof(char));
   assert(wallet->public_key != NULL);
 
-  wallet->private_key = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  wallet->private_key = malloc((SHA256_BLOCK_SIZE + 1) * sizeof(char));
   assert(wallet->private_key != NULL);
 
-  wallet->transactions = calloc(8, sizeof(Transaction));
+  wallet->transactions = malloc(8 * sizeof(Transaction));
   assert(wallet->transactions != NULL);
 
   BYTE buffer[SHA256_BLOCK_SIZE] = {'0'};
@@ -113,17 +113,17 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
 
   assert(payer != NULL && payee != NULL);
 
-  Transaction *transaction = calloc(1, sizeof(Transaction));
+  Transaction *transaction = malloc(sizeof(Transaction));
   assert(transaction != NULL);
 
-  transaction->payee_address = calloc(SHA256_BLOCK_SIZE + 1, sizeof(char));
+  transaction->payee_address = malloc((SHA256_BLOCK_SIZE + 1) * sizeof(char));
   assert(transaction->payee_address != NULL);
 
   transaction->payer_public_key =
-      calloc((SHA256_BLOCK_SIZE * 2) + 1, sizeof(char));
+      malloc(((SHA256_BLOCK_SIZE * 2) + 1) * sizeof(char));
   assert(transaction->payer_public_key != NULL);
 
-  transaction->payer_signature = calloc(65, sizeof(char));
+  transaction->payer_signature = malloc(65 * sizeof(char));
   assert(transaction->payer_signature != NULL);
 
   memcpy(transaction->payee_address, payee->wallet->address, SHA256_BLOCK_SIZE);
@@ -148,7 +148,7 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
          time_buffer);
 
   unsigned char *text_buffer =
-      calloc(SHA256_BLOCK_SIZE + size_time + size_amount, sizeof(char));
+      malloc((SHA256_BLOCK_SIZE + size_time + size_amount) * sizeof(char));
   assert(text_buffer != NULL);
 
   memcpy(text_buffer, transaction->payee_address, SHA256_BLOCK_SIZE);
@@ -169,7 +169,7 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   }
   printf("\n");
 
-  unsigned long *signature_buffer = calloc(2, sizeof(long));
+  unsigned long *signature_buffer = malloc(2 * sizeof(long));
   assert(signature_buffer != 0);
 
   GetSignature((long)hash_buffer, signature_buffer);
@@ -204,14 +204,14 @@ Block *Block_create(Transaction **transactions, int transaction_counter,
 
   assert(transactions != NULL);
 
-  Block *block = calloc(1, sizeof(Block));
+  Block *block = malloc(sizeof(Block));
   assert(block != NULL);
 
   *(unsigned long *)&block->magic_number = 0xD9B4BEF9UL;
 
   block->transaction_counter = transaction_counter;
 
-  block->transactions = calloc(8, sizeof(Transaction));
+  block->transactions = malloc(8 * sizeof(Transaction));
   assert(block->transactions != NULL);
 
   for (int i = 0; i < transaction_counter; i++) {
