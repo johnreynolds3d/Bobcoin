@@ -1,6 +1,6 @@
 # bobcoin
 
-### A slightly Lynchian implementation of a blockchain in C 
+### A Slightly Lynchian Implementation of a Blockchain in C 
 
 This is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
 
