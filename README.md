@@ -22,28 +22,20 @@ The concept of the blockchain strikes me as a truly revolutionary idea with enor
      ```
      # cd bobcoin
      ```
-  3. Run make (on Linux; not sure about Windows atm...)
+  3. Run make
      ```
-     # make -C build/linux
+     # make
      ```
-     or, if you're on a Mac
+  4. Then run the program
      ```
-     # make -C build/mac
-     ```
-  4. Then run the program (on Linux) with
-     ```
-     # ./bin/linux/bobcoin
-     ```
-     on Mac
-     ```
-     # ./bin/mac/bobcoin
+     # ./bin/bobcoin
      ```
 
 ## Tests
 
 I've been using Valgrind to highlight potential memory issues. 
 
-On Linux, run
+To test with Valgrind, run
 ```
 # sh test/runtests.sh
 ```
