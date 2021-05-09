@@ -1,6 +1,6 @@
 # bobcoin
 
-### A Slightly Lynchian Implementation of a Blockchain in C 
+### A *Slightly Lynchian* Implementation in C of a Blockchain 
 
 This is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
 
@@ -10,7 +10,7 @@ There's something *decentralized* happening in the sleepy town of Twin Peaks...
 
 ## Motivation 
 
-The concept of the blockchain strikes me as a truly revolutionary idea with enormous potential, and I felt like the best way to gain a deeper understanding of it was to build one!
+The Blockchain strikes me as a truly revolutionary idea with enormous potential, and I felt that the best way to gain a deeper understanding of it was to build one!
 
 ## Installation
 
