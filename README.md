@@ -1,10 +1,10 @@
 # bobcoin
 
-### A *Slightly Lynchian* Implementation in C of a Blockchain 
+### A Slightly *Lynchian* Implementation of a Blockchain in C
 
-This is a work in progress. I'm currently working on mirroring the Bitcoin protocol, but with a twist...
+This is a work in progress. I'm working on mirroring the Bitcoin protocol, but with a twist.
 
-There's something *decentralized* happening in the sleepy town of Twin Peaks... 
+...*Psst!... Hey - have you heard?...* There's something *decentralized* happening in the sleepy little town of Twin Peaks... 
 
 ![Screenshot](/img/bobcoin.png?raw=true "")
 
