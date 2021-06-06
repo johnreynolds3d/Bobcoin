@@ -1,6 +1,5 @@
 # run executable with CPUPROFILE environment var set
-#LD_PRELOAD=/usr/local/lib/libprofiler.so CPUPROFILE=test/test.prof ./bin/bobcoin
-CPUPROFILE=test/test.prof ./bin/bobcoin
+LD_PRELOAD=/usr/lib/libprofiler.so CPUPROFILE=test/test.prof ./bin/bobcoin
 
 # run pprof and view results in web browser
 pprof -http=localhost:8000 ./bin/bobcoin test/test.prof
@@ -12,4 +11,4 @@ pprof -http=localhost:8000 ./bin/bobcoin test/test.prof
 #pprof -gv ./bin/bobcoin test/test.prof
 
 # generate PDF report with previous graphical output
-#pprof --pdf ./bin/bobcoin test/test.prof > test/test.profile.pdf
+pprof --pdf ./bin/bobcoin test/test.prof > test/test_profile.pdf

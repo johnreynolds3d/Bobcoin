@@ -13,4 +13,4 @@ build/sha256.o : lib/sha256.c lib/headers/sha256.h
 	gcc -c -fpic -o build/sha256.o lib/sha256.c
 
 clean : 
-	rm bin/bobcoin build/bobcoin.o build/ecdsa.o build/sha256.o test/test.prof test/heapprof.0001.heap
+	rm bin/bobcoin build/bobcoin.o build/ecdsa.o build/sha256.o test/test.prof test/test_profile.pdf test/heapprof.0001.heap test/heapprof.0001.heap.pdf
