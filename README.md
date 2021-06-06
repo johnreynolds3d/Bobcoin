@@ -6,7 +6,7 @@ This is a work in progress. I'm working on mirroring the Bitcoin protocol, but w
 
 ...*Psst!... Hey - have you heard?...* There's something *decentralized* happening in the sleepy little town of Twin Peaks... 
 
-![Screenshot](/img/bobcoin.png?raw=true "")
+![Screenshot](/img/bobcoin.webp?raw=true "")
 
 ## Motivation 
 

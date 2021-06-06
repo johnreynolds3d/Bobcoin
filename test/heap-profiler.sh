@@ -1,5 +1,5 @@
 # run executable with HEAPPROFILE environment var set
-HEAPPROFILE=test/heapprof HEAPCHECK=normal ./bin/bobcoin
+HEAPPROFILE=test/heapprof HEAPCHECK=strict ./bin/bobcoin
 
 # run pprof and view results in a web browser
 pprof -http=localhost:8000 ./bin/bobcoin test/heapprof.0001.heap

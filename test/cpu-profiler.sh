@@ -1,5 +1,6 @@
 # run executable with CPUPROFILE environment var set
-LD_PRELOAD=/usr/local/lib/libprofiler.so CPUPROFILE=test/test.prof ./bin/bobcoin
+#LD_PRELOAD=/usr/local/lib/libprofiler.so CPUPROFILE=test/test.prof ./bin/bobcoin
+CPUPROFILE=test/test.prof ./bin/bobcoin
 
 # run pprof and view results in web browser
 pprof -http=localhost:8000 ./bin/bobcoin test/test.prof
