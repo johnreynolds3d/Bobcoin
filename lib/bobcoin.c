@@ -228,7 +228,7 @@ void User_print(User *user, int user_counter) {
 
   assert(user != NULL);
 
-  printf("\nUser %d:\n", user_counter);
+  printf("\n User %d:\n", user_counter);
   printf("\tuser name:\t\t%s\n", user->name);
   printf("\tuser public key:\t%s\n", user->public_key);
   printf("\tuser private key:\t");
