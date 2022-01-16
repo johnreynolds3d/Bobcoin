@@ -37,7 +37,7 @@ I've been using Valgrind to highlight potential memory issues.
 
 To test with Valgrind, run
 ```
-# sh test/runtests.sh
+# sh test.sh
 ```
 
 ## Credits

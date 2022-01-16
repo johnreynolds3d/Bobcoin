@@ -3,6 +3,7 @@
 #include "headers/sha256.h"
 #include <assert.h>
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,13 +49,13 @@ User *User_create(char *name, int user_counter) {
 
   memcpy(user->name, name, strlen((const char *)(name)) + 1);
 
-  char alphanum[] = "0123456789abcdef";
+  const char alphanum[] = "0123456789abcdef";
 
   user->public_key[0] = 'b';
   user->public_key[1] = 'c';
   user->public_key[2] = '1';
 
-  int i;
+  register uint_fast8_t i;
 
   for (i = 3; i < SHA256_BLOCK_SIZE * 2; i++) {
     user->public_key[i] =
@@ -130,16 +131,16 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   memcpy(transaction->payer_public_key, payer->public_key,
          SHA256_BLOCK_SIZE * 2);
 
-  printf("\n  Transaction pending:\n\n");
+  puts("\n  Transaction pending:\n");
 
-  int size_amount = snprintf(NULL, 0, "%d", amount);
+  uint_fast8_t size_amount = snprintf(NULL, 0, "%d", amount);
   assert(size_amount > 0);
 
   char amount_buffer[size_amount + 1];
   snprintf((char *)amount_buffer, size_amount + 1, "%d", amount);
   printf("\ttransaction amount:\t%s BOB\n", amount_buffer);
 
-  int size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
+  uint_fast8_t size_time = snprintf(NULL, 0, "%lu", (unsigned long)time(NULL));
   assert(size_time > 0);
 
   char time_buffer[size_time];
@@ -164,10 +165,10 @@ Transaction *Transaction_create(User *payer, User *payee, unsigned int amount) {
   GetHash(hash_buffer, text_buffer);
 
   printf("\ttransaction hash:\t");
-  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+  for (register uint_fast8_t i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", hash_buffer[i]);
   }
-  printf("\n");
+  puts("");
 
   unsigned long *signature_buffer = calloc(2, sizeof(long));
   assert(signature_buffer != 0);
@@ -214,7 +215,7 @@ Block *Block_create(Transaction **transactions, int transaction_counter,
   block->transactions = calloc(8, sizeof(Transaction));
   assert(block->transactions != NULL);
 
-  for (int i = 0; i < transaction_counter; i++) {
+  for (register uint_fast8_t i = 0; i < transaction_counter; i++) {
     block->transactions[i] = transactions[i];
   }
 
@@ -231,10 +232,11 @@ void User_print(User *user, int user_counter) {
   printf("\tuser name:\t\t%s\n", user->name);
   printf("\tuser public key:\t%s\n", user->public_key);
   printf("\tuser private key:\t");
-  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+
+  for (register uint_fast8_t i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->private_key[i]);
   }
-  printf("\n");
+  puts("");
 
   Wallet_print(user);
 }
@@ -243,36 +245,35 @@ void Wallet_print(User *user) {
 
   assert(user != NULL);
 
-  int i;
+  register uint_fast8_t i;
 
   printf("\n\twallet address:\t\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->wallet->address[i]);
   }
-  printf("\n");
+  puts("");
 
   printf("\twallet public key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->wallet->public_key[i]);
   }
-  printf("\n");
+  puts("");
 
   printf("\twallet private key:\t");
   for (i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", user->wallet->private_key[i]);
   }
-  printf("\n");
+  puts("");
 
   if (user->wallet->transactions[0] == NULL) {
-    printf("\n      wallet transactions:\tN/A\n");
+    puts("\n        wallet transactions:\tN/A");
   } else {
-    printf("\n      wallet transactions:\n");
+    puts("\n        wallet transactions:");
     for (i = 0; user->wallet->transactions[i] != NULL; i++)
       Transaction_print(user->wallet->transactions[i]);
   }
-  printf("\n");
 
-  printf("      wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
+  printf("\n        wallet balance:\t\t%d BOB\n\n", user->wallet->balance);
 }
 
 void Transaction_print(Transaction *transaction) {
@@ -280,28 +281,29 @@ void Transaction_print(Transaction *transaction) {
   assert(transaction != NULL);
 
   printf("\n\n\tpayee wallet address:\t");
-  for (int i = 0; i < SHA256_BLOCK_SIZE; i++) {
+
+  for (register uint_fast8_t i = 0; i < SHA256_BLOCK_SIZE; i++) {
     printf("%.2x", transaction->payee_address[i]);
   }
-  printf("\n");
+  puts("");
 
   printf("\ttransaction amount:\t%d BOB\n", transaction->amount);
-  printf("\tpayer public key:\t%s\n", transaction->payer_public_key);
+  printf("\tpayer public key:\t%s\n\n", transaction->payer_public_key);
 }
 
 void Block_print(Block *block, int block_counter) {
 
   assert(block != NULL);
 
-  printf("\n\n\t\t\t       -------------------------------------\n");
-  printf("\t\t\t                     BLOCK %d\n", block_counter);
-  printf("\t\t\t       -------------------------------------\n\n");
+  puts("\n\n\t\t\t      -------------------------------------");
+  printf("\t\t\t                    BLOCK %d\n", block_counter);
+  puts("\t\t\t      -------------------------------------");
 
   // printf("\n    Transaction counter:\t%d\n\n", block->transaction_counter);
 
   printf("\n  Block transactions:");
 
-  for (int i = 0; i < block->transaction_counter; i++) {
+  for (register uint_fast8_t i = 0; i < block->transaction_counter; i++) {
     Transaction_print(block->transactions[i]);
   }
 }
