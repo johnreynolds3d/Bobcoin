@@ -45,7 +45,3 @@ To test with Valgrind, run
 This project utilizes code from:
   * Brad Conte's implementation of SHA-256, which can be found at https://github.com/B-Con/crypto-algorithms
   * A "toy" implementation of ECDSA from https://rosettacode.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm
-
-## License
-
-MIT &copy; John Reynolds
