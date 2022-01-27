@@ -1,4 +1,4 @@
-#include "../lib/headers/bobcoin.h"
+#include "../lib/bobcoin.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-#include "headers/ecdsa.h"
+#include "../lib/ecdsa.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,13 +120,13 @@ void padd(epnt *r, epnt p, epnt q) {
     t = p.y - q.y;
     la = modn(t * exgcd(p.x - q.x, e.N));
   } else // P = Q, R := 2P
-      if (p.y == q.y && p.y != 0) {
-    t = modn(3 * modn(p.x * p.x) + e.a);
-    la = modn(t * exgcd(2 * p.y, e.N));
-  } else {
-    *r = zerO;
-    return;
-  } // P = -Q, R := O
+    if (p.y == q.y && p.y != 0) {
+      t = modn(3 * modn(p.x * p.x) + e.a);
+      la = modn(t * exgcd(2 * p.y, e.N));
+    } else {
+      *r = zerO;
+      return;
+    } // P = -Q, R := O
 
   t = modn(la * la - p.x - q.x);
   r->y = modn(la * (p.x - t) - p.y);

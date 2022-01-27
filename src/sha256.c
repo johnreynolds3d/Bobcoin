@@ -1,4 +1,4 @@
-#include "headers/sha256.h"
+#include "../lib/sha256.h"
 #include <memory.h>
 #include <stdlib.h>
 

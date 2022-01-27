@@ -1,6 +1,6 @@
-#include "headers/bobcoin.h"
-#include "headers/ecdsa.h"
-#include "headers/sha256.h"
+#include "../lib/bobcoin.h"
+#include "../lib/ecdsa.h"
+#include "../lib/sha256.h"
 #include <assert.h>
 #include <math.h>
 #include <stdint.h>
