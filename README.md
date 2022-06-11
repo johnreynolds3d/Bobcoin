@@ -1,4 +1,4 @@
-# bobcoin
+# Bobcoin
 
 **A slightly *Lynchian* implementation of a [Blockchain](https://en.wikipedia.org/wiki/Blockchain) in C.**
 
